@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Lebanon 8-Ball Pro</title>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#000080">
     <style>
         :root {
             --bg: #020617; --felt: #000080; --gold: #fbbf24;
@@ -88,11 +90,7 @@
         .game-num { font-size: 0.75rem; font-weight: bold; color: var(--gold); text-align: center; opacity: 0.8; }
         
         .player-box { position: relative; display: flex; flex-direction: column; padding: 4px; border: 2px solid transparent; transition: border 0.2s ease; border-radius: 8px; }
-        
-        /* Home Winner: White Border */
         .player-box.win-home { border-color: white; background: rgba(255, 255, 255, 0.05); }
-        
-        /* Visiting Winner: Red Border */
         .player-box.win-visit { border-color: var(--visit); background: rgba(239, 68, 68, 0.1); }
         
         .p-input-wrap { display: flex; align-items: center; background: rgba(0,0,0,0.4); border-radius: 6px; padding-right: 2px; }
@@ -119,7 +117,7 @@
         .marker { font-size: 0.65rem; padding: 2px 6px; background: rgba(0,0,0,0.6); border-radius: 4px; color: #94a3b8; cursor: pointer; border: 1px solid transparent; }
         .marker.on { background: var(--gold); color: black; font-weight: bold; border-color: white; }
 
-        .win-btn { width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 900; background: #0f172a; color: #475569; justify-self: center; }
+        .win-btn { width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 900; background: #0f172a; color: #475569; justify-self: center; cursor: pointer; }
         .win-btn.h { background: var(--home); color: white; border-color: white; box-shadow: 0 0 10px var(--home); }
         .win-btn.v { background: var(--visit); color: white; border-color: white; box-shadow: 0 0 10px var(--visit); }
 
@@ -136,9 +134,9 @@
 <div id="help-modal">
     <div class="help-content">
         <h2>How to use Lebanon 8-Ball</h2>
-        <p>1. <b>SETUP:</b> Connect your roster data.</p>
-        <p>2. <b>SCORING:</b> Tap 'W' to cycle wins. Home = <b>White Border</b>, Visit = <b>Red Border</b>.</p>
-        <p>3. <b>DATA:</b> Manual player entries are saved instantly.</p>
+        <p>1. <b>SETUP:</b> Connect your roster sheet URL under Setup.</p>
+        <p>2. <b>SCORING:</b> Tap 'W' to cycle win status. Home = <b>White Border</b>, Visit = <b>Red Border</b>.</p>
+        <p>3. <b>MARKERS:</b> Tap <b>TR</b> (Table Run) or <b>8B</b> (8 on Break) for specific game feats.</p>
         <button class="help-close" onclick="toggleHelp()">GOT IT!</button>
     </div>
 </div>
@@ -176,12 +174,12 @@
         <div class="input-wrapper">
             <input type="text" id="h-team" placeholder="Home Team" readonly onclick="showTeamDropdown(event, 'h-team')">
             <div id="h-team-menu" class="custom-dropdown"></div>
-            <button class="voice-btn" onclick="startVoice('h-team')">🎤</button>
+            <button class="voice-btn" onclick="startVoice('h-team', this)">🎤</button>
         </div>
         <div class="input-wrapper">
             <input type="text" id="v-team" placeholder="Visiting Team" readonly onclick="showTeamDropdown(event, 'v-team')">
             <div id="v-team-menu" class="custom-dropdown"></div>
-            <button class="voice-btn" onclick="startVoice('v-team')">🎤</button>
+            <button class="voice-btn" onclick="startVoice('v-team', this)">🎤</button>
         </div>
     </div>
     <div class="game-grid" id="grid"></div>
@@ -197,6 +195,10 @@
 </footer>
 
 <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+
     let MASTER_ROSTERS = {};
     let MASTER_SCHEDULE = [];
     let state = Array.from({length: 18}, (_, i) => ({
@@ -253,7 +255,7 @@
             if (rowType === "ROSTER") {
                 const team = parts[1].toUpperCase();
                 if (!newRosters[team]) newRosters[team] = [];
-                newRosters[team].push(parts[2]);
+                if (parts[2]) newRosters[team].push(parts[2]);
             } else if (rowType === "SCHEDULE") {
                 newSchedule.push({ home: parts[1], visit: parts[2], date: parts[3] });
             }
@@ -361,7 +363,7 @@
                     <div class="p-input-wrap">
                         <input type="text" id="h-in-${g.id}" placeholder="Home" value="${g.h}" readonly onclick="showPlayerDropdown(event, 'h', ${i})">
                         <div id="h-menu-${i}" class="custom-dropdown"></div>
-                        <button class="voice-btn" style="font-size:0.8rem" onclick="startVoice('h-in-${g.id}', ${i}, 'h')">🎤</button>
+                        <button class="voice-btn" style="font-size:0.8rem" onclick="startVoice('h-in-${g.id}', this, ${i}, 'h')">🎤</button>
                     </div>
                     <div class="markers">
                         <span class="marker ${g.hTR?'on':''}" onclick="setExclusiveMarker(${g.id}, 'hTR')">TR</span>
@@ -372,7 +374,7 @@
                     <div class="p-input-wrap">
                         <input type="text" id="v-in-${g.id}" placeholder="Visit" value="${g.v}" readonly onclick="showPlayerDropdown(event, 'v', ${i})">
                         <div id="v-menu-${i}" class="custom-dropdown"></div>
-                        <button class="voice-btn" style="font-size:0.8rem" onclick="startVoice('v-in-${g.id}', ${i}, 'v')">🎤</button>
+                        <button class="voice-btn" style="font-size:0.8rem" onclick="startVoice('v-in-${g.id}', this, ${i}, 'v')">🎤</button>
                     </div>
                     <div class="markers">
                         <span class="marker ${g.vTR?'on':''}" onclick="setExclusiveMarker(${g.id}, 'vTR')">TR</span>
@@ -408,17 +410,16 @@
         }
     }
 
-    function startVoice(targetId, idx = null, side = null) {
+    function startVoice(targetId, btn, idx = null, side = null) {
         const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
         if(!Speech) return;
         const recognition = new Speech();
-        const btn = event.currentTarget;
         recognition.onstart = () => btn.classList.add('listening');
         recognition.onend = () => btn.classList.remove('listening');
         recognition.onresult = (e) => {
             const val = e.results[0][0].transcript;
             document.getElementById(targetId).value = val;
-            if(idx !== null) state[idx][side] = val;
+            if(idx !== null && side !== null) state[idx][side] = val;
             draw();
         };
         recognition.start();
