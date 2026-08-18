@@ -1,0 +1,9 @@
+{
+  "name": "MVP TV Scorekeeper",
+  "short_name": "MVP TV",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#2d5a27",
+  "icons":
+}
