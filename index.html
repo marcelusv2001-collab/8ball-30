@@ -18,6 +18,7 @@
       --text-muted: #94a3b8;
       --border-color: #334155;
       --input-bg: #0b1329;
+      --yellow-accent: #f59e0b;
 
       /* Dynamic Round Colors */
       --r1-color: #38bdf8;
@@ -76,6 +77,12 @@
       font-size: 13px;
     }
 
+    input:disabled, select:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background-color: #1a2333;
+    }
+
     button {
       padding: 8px 14px;
       border-radius: 6px;
@@ -88,8 +95,13 @@
     }
 
     button:hover { background-color: var(--accent-hover); }
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed !important;
+      background-color: #475569 !important;
+    }
     button.enter-btn { background-color: var(--success-color); height: 42px; font-size: 15px; font-weight: bold; }
-    button.enter-btn:hover { background-color: #15803d; }
+    button.enter-btn:hover:not(:disabled) { background-color: #15803d; }
     button.secondary { background-color: #475569; }
     button.danger { background-color: var(--danger-color); }
 
@@ -100,7 +112,7 @@
     /* Roster Grid */
     .roster-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 10px;
       margin-top: 10px;
       border-top: 1px solid var(--border-color);
@@ -112,6 +124,8 @@
       padding: 10px;
       border-radius: 8px;
       border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
     }
 
     .roster-slot {
@@ -123,7 +137,7 @@
     }
     .roster-slot span { font-weight: bold; color: #60a5fa; width: 22px; flex-shrink: 0; }
 
-    .hc-select { width: 55px !important; text-align: center; }
+    .hc-select { width: 55px !important; text-align: center; color: var(--yellow-accent) !important; font-weight: bold; }
     .np-btn {
       padding: 6px 8px;
       font-size: 10px;
@@ -132,7 +146,7 @@
       border-radius: 4px;
       cursor: pointer;
     }
-    .np-btn.active { background: #f59e0b; color: #000; font-weight: bold; }
+    .np-btn.active { background: var(--yellow-accent); color: #000; font-weight: bold; }
 
     .np-input-wrap {
       flex: 1;
@@ -142,7 +156,23 @@
       display: block;
     }
 
-    /* Scorebug */
+    .lock-btn {
+      width: 100%;
+      margin-top: 6px;
+      background-color: #475569;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 8px;
+      border-radius: 6px;
+    }
+    .lock-btn.locked {
+      background-color: var(--success-color);
+    }
+    .lock-btn.locked:hover {
+      background-color: #15803d;
+    }
+
+    /* Scorebug Styles */
     .scorebug {
       display: flex;
       flex-wrap: wrap;
@@ -151,50 +181,121 @@
       background: #090d16;
       border: 2px solid var(--accent-color);
       border-radius: 8px;
-      padding: 12px;
+      padding: 10px;
       gap: 8px;
+      width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
-    .team-box { display: flex; align-items: center; gap: 10px; flex: 1 1 180px; }
-    .team-box.away { justify-content: flex-end; }
-    .team-name { font-size: 17px; font-weight: bold; }
-    .score-display { font-size: 32px; font-weight: 900; color: #60a5fa; width: 45px; text-align: center; }
-    .vs-badge { font-size: 14px; color: var(--text-muted); font-weight: bold; text-align: center; }
+    .team-box { 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      flex: 1 1 180px;
+      min-width: 0;
+      overflow: hidden;
+    }
 
-    /* Modal Layout */
+    .team-box.away { 
+      justify-content: flex-end; 
+    }
+
+    .team-info {
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .team-name { 
+      font-size: 15px; 
+      font-weight: bold; 
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .score-detail {
+      font-size: 11px; 
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .score-display { 
+      font-size: 28px; 
+      font-weight: 900; 
+      color: #60a5fa; 
+      width: 40px; 
+      text-align: center; 
+      flex-shrink: 0;
+    }
+
+    .vs-badge { 
+      font-size: 13px; 
+      color: var(--text-muted); 
+      font-weight: bold; 
+      text-align: center;
+      padding: 0 4px;
+      flex-shrink: 0;
+    }
+
+    /* Full-Screen Score & Review Modal Overlay */
     .modal-overlay {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.85);
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: var(--bg-color);
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 999;
-      padding: 8px;
+      z-index: 9999;
+      padding: 12px;
+      box-sizing: border-box;
     }
     .modal-overlay.hidden { display: none; }
 
     .modal-card {
       background: var(--card-bg);
-      border: 3px solid var(--active-round-color);
-      border-radius: 12px;
+      border: 2px solid var(--active-round-color);
+      border-radius: 10px;
       padding: 14px;
       width: 100%;
-      max-width: 640px;
-      height: 96vh;
+      max-width: 1100px;
+      height: 100%;
+      max-height: calc(100vh - 24px);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      overflow-y: auto;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8);
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
       flex-shrink: 0;
+    }
+
+    .modal-header-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .tab-btn {
+      font-size: 11px;
+      padding: 4px 8px;
+      background: #334155;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+    .tab-btn.active {
+      background: var(--accent-color);
+      color: white;
     }
 
     .round-selector-dropdown {
@@ -202,21 +303,35 @@
       color: #000;
       background-color: var(--active-round-color);
       font-weight: 800;
-      padding: 4px 8px;
-      border-radius: 12px;
+      padding: 6px 10px;
+      border-radius: 8px;
       text-transform: uppercase;
       border: none;
       cursor: pointer;
       outline: none;
+      max-width: 360px;
     }
 
-    /* Score Box */
+    .tab-content {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: space-between;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .tab-content.hidden {
+      display: none !important;
+    }
+
+    /* Compact Score Box */
     .compact-game-box {
       background: #090d16;
       border: 1px solid var(--border-color);
       border-radius: 8px;
       padding: 10px;
-      margin: 6px 0;
+      margin-bottom: 8px;
       flex-shrink: 0;
     }
 
@@ -261,7 +376,7 @@
     }
 
     .special-run-btn.active {
-      background: #f59e0b;
+      background: var(--yellow-accent);
       color: #000;
       border-color: #fbbf24;
       box-shadow: 0 0 6px rgba(245, 158, 11, 0.7);
@@ -302,10 +417,51 @@
       box-shadow: 0 0 8px rgba(22, 163, 74, 0.7);
     }
 
-    /* Tables & Cards */
+    /* Player vs Player Head-to-Head Section */
+    .pvp-review-card {
+      background: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px;
+      margin: 8px 0;
+      flex-shrink: 0;
+    }
+
+    .pvp-review-card h4 {
+      margin: 0 0 6px 0;
+      font-size: 11px;
+      color: #60a5fa;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .pvp-header-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .pvp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .pvp-table th, .pvp-table td { border: 1px solid var(--border-color); padding: 5px 3px; text-align: center; }
+    .pvp-table th { background: #1e293b; color: var(--text-muted); font-weight: 600; }
+
+    /* Review View Containers */
+    .review-inner-container {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      gap: 10px;
+    }
+
     .summary-table-wrap { width: 100%; overflow-x: auto; flex-shrink: 0; }
     .summary-table { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 12px; }
-    .summary-table th, .summary-table td { border: 1px solid var(--border-color); padding: 5px 3px; text-align: center; }
+    .summary-table th, .summary-table td { border: 1px solid var(--border-color); padding: 7px 4px; text-align: center; }
     .summary-table th { background: #090d16; color: var(--text-muted); }
 
     .r1-row { border-left: 3px solid var(--r1-color) !important; }
@@ -313,27 +469,30 @@
     .r3-row { border-left: 3px solid var(--r3-color) !important; }
     .active-row { background: rgba(255, 255, 255, 0.05); font-weight: bold; }
 
-    /* Round Progress Matchups Section */
     .matchup-progress-card {
       background: #090d16;
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 8px;
-      margin-top: 6px;
+      padding: 10px;
       flex-grow: 1;
+      display: flex;
+      flex-direction: column;
       overflow-y: auto;
+      min-height: 220px;
     }
 
     .matchup-progress-card h4 {
-      margin: 0 0 6px 0;
+      margin: 0 0 8px 0;
       font-size: 12px;
       color: #60a5fa;
       text-transform: uppercase;
       display: flex;
       justify-content: space-between;
+      flex-shrink: 0;
     }
 
-    .badge { font-size: 9px; padding: 1px 3px; border-radius: 3px; background: #334155; margin: 0 1px; color: #f59e0b; }
+    .badge { font-size: 9px; padding: 1px 3px; border-radius: 3px; background: #334155; margin: 0 1px; color: var(--yellow-accent); }
+    .hc-badge { color: var(--yellow-accent); font-weight: bold; font-size: 11px; }
     .win-text { color: #4ade80; font-weight: bold; }
   </style>
 </head>
@@ -385,26 +544,28 @@
         <div class="team-roster-column">
           <h3 id="homeRosterHeader" style="font-size: 14px; color: #60a5fa; margin-bottom: 6px;">Home Lineup</h3>
           <div id="homePlayerInputs"></div>
+          <button type="button" id="lockHomeBtn" class="lock-btn">🔒 Lock Home Lineup</button>
         </div>
         <div class="team-roster-column">
           <h3 id="awayRosterHeader" style="font-size: 14px; color: #60a5fa; margin-bottom: 6px;">Away Lineup</h3>
           <div id="awayPlayerInputs"></div>
+          <button type="button" id="lockAwayBtn" class="lock-btn">🔒 Lock Away Lineup</button>
         </div>
       </div>
 
       <div class="input-group" style="margin-top: 10px; justify-content: flex-end;">
-        <button id="startMatchBtn" class="enter-btn">ENTER SCORE</button>
+        <button id="startMatchBtn" class="enter-btn" disabled>ENTER SCORE (Lock Both Lineups First)</button>
       </div>
     </div>
 
-    <!-- 3. Live Scorebug -->
+    <!-- 3. Live Scorebug Display -->
     <div class="card">
       <h2>3. Live Scorebug Display</h2>
       <div class="scorebug">
         <div class="team-box home">
-          <div>
+          <div class="team-info">
             <div class="team-name" id="homeNameDisplay">Home Team</div>
-            <div style="font-size: 11px; color: var(--text-muted);" id="homePtsDetail">Points: 0 | Wins: 0</div>
+            <div class="score-detail" id="homePtsDetail">Pts: 0 | Wins: 0</div>
           </div>
           <div class="score-display" id="homeTeamMatchPts">0</div>
         </div>
@@ -413,9 +574,9 @@
 
         <div class="team-box away">
           <div class="score-display" id="awayTeamMatchPts">0</div>
-          <div style="text-align: right;">
+          <div class="team-info" style="text-align: right;">
             <div class="team-name" id="awayNameDisplay">Away Team</div>
-            <div style="font-size: 11px; color: var(--text-muted);" id="awayPtsDetail">Points: 0 | Wins: 0</div>
+            <div class="score-detail" id="awayPtsDetail">Pts: 0 | Wins: 0</div>
           </div>
         </div>
       </div>
@@ -425,90 +586,138 @@
   <!-- Full-Screen Interactive Scoring Modal -->
   <div id="scoreModal" class="modal-overlay hidden">
     <div class="modal-card">
-      <div>
-        <div class="modal-header">
-          <select id="roundNavSelect" class="round-selector-dropdown"></select>
+      <div class="modal-header">
+        <select id="roundNavSelect" class="round-selector-dropdown"></select>
+        <div class="modal-header-actions">
+          <button id="matchReviewTabBtn" class="tab-btn">Match Review</button>
           <button id="backToSetupBtn" class="secondary" style="font-size: 11px; padding: 4px 8px;">Main Setup</button>
         </div>
+      </div>
 
-        <!-- Touch Score Entry Section -->
-        <div class="compact-game-box">
-          <!-- Home Player Row -->
-          <div class="player-row">
-            <div class="player-header">
-              <strong id="mHomePlayerLbl" style="color: #60a5fa;">Home Player</strong>
-              <div class="special-btn-group">
-                <button type="button" class="special-run-btn" id="home8bbBtn" onclick="toggleRunBtn('home', '8bb')">8BB</button>
-                <button type="button" class="special-run-btn" id="homeTrBtn" onclick="toggleRunBtn('home', 'tr')">TR</button>
+      <!-- Tab 1: Live Scoring -->
+      <div id="scoringTab" class="tab-content">
+        <div>
+          <div class="compact-game-box">
+            <!-- Home Player Row -->
+            <div class="player-row">
+              <div class="player-header">
+                <strong id="mHomePlayerLbl" style="color: #60a5fa;">Home Player</strong>
+                <div class="special-btn-group">
+                  <button type="button" class="special-run-btn" id="home8bbBtn" onclick="toggleRunBtn('home', '8bb')">8BB</button>
+                  <button type="button" class="special-run-btn" id="homeTrBtn" onclick="toggleRunBtn('home', 'tr')">TR</button>
+                </div>
               </div>
+              <div class="pts-btn-row" id="homePtsBar"></div>
             </div>
-            <div class="pts-btn-row" id="homePtsBar"></div>
+
+            <!-- Away Player Row -->
+            <div class="player-row" style="margin-top: 6px;">
+              <div class="player-header">
+                <strong id="mAwayPlayerLbl" style="color: #f87171;">Away Player</strong>
+                <div class="special-btn-group">
+                  <button type="button" class="special-run-btn" id="away8bbBtn" onclick="toggleRunBtn('away', '8bb')">8BB</button>
+                  <button type="button" class="special-run-btn" id="awayTrBtn" onclick="toggleRunBtn('away', 'tr')">TR</button>
+                </div>
+              </div>
+              <div class="pts-btn-row" id="awayPtsBar"></div>
+            </div>
           </div>
 
-          <!-- Away Player Row -->
-          <div class="player-row" style="margin-top: 6px;">
-            <div class="player-header">
-              <strong id="mAwayPlayerLbl" style="color: #f87171;">Away Player</strong>
-              <div class="special-btn-group">
-                <button type="button" class="special-run-btn" id="away8bbBtn" onclick="toggleRunBtn('away', '8bb')">8BB</button>
-                <button type="button" class="special-run-btn" id="awayTrBtn" onclick="toggleRunBtn('away', 'tr')">TR</button>
-              </div>
+          <button id="saveGameBtn" style="width: 100%; margin-bottom: 6px;" class="enter-btn">Submit Game Result</button>
+
+          <!-- Player vs. Player Live Match Review -->
+          <div class="pvp-review-card">
+            <h4>
+              <span>Player Head-To-Head Matchup History</span>
+              <span style="color: var(--yellow-accent);" id="pvpHandicapSummary">HC: - vs -</span>
+            </h4>
+            <div class="pvp-header-line">
+              <span style="color:#60a5fa;" id="pvpHomeName">Home Player</span>
+              <span style="color:var(--text-muted); font-size:10px;">VS</span>
+              <span style="color:#f87171;" id="pvpAwayName">Away Player</span>
             </div>
-            <div class="pts-btn-row" id="awayPtsBar"></div>
+            <table class="pvp-table">
+              <thead>
+                <tr>
+                  <th>Game / Round</th>
+                  <th id="pvpThHome">Home Score</th>
+                  <th id="pvpThAway">Away Score</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody id="pvpTableBody">
+                <tr><td>R1</td><td>-</td><td>-</td><td>-</td></tr>
+                <tr><td>R2</td><td>-</td><td>-</td><td>-</td></tr>
+                <tr><td>R3</td><td>-</td><td>-</td><td>-</td></tr>
+                <tr style="font-weight: bold; background: #1e293b;">
+                  <td>Total Head-to-Head</td>
+                  <td id="pvpTotHome">0 pts</td>
+                  <td id="pvpTotAway">0 pts</td>
+                  <td id="pvpHeadWinner">-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Game Edit Controls -->
+        <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: auto; flex-shrink: 0; align-items: center; padding-top: 8px;">
+          <button id="undoGameBtn" class="secondary" style="font-size: 11px; padding: 6px 10px;">Undo Last</button>
+          <button id="endMatchBtn" class="danger" style="font-size: 11px; padding: 6px 10px;">Exit</button>
+        </div>
+      </div>
+
+      <!-- Tab 2: Match Review -->
+      <div id="reviewTab" class="tab-content hidden">
+        <div class="review-inner-container">
+          <!-- Team Round Summary Table -->
+          <div class="summary-table-wrap">
+            <table class="summary-table">
+              <thead>
+                <tr>
+                  <th>Round</th>
+                  <th id="thHome">Home</th>
+                  <th id="thAway">Away</th>
+                  <th>Winner</th>
+                </tr>
+              </thead>
+              <tbody id="summaryTableBody">
+                <tr id="rowR1" class="r1-row"><td>R1</td><td id="r1H">0</td><td id="r1A">0</td><td id="r1W">-</td></tr>
+                <tr id="rowR2" class="r2-row"><td>R2</td><td id="r2H">0</td><td id="r2A">0</td><td id="r2W">-</td></tr>
+                <tr id="rowR3" class="r3-row"><td>R3</td><td id="r3H">0</td><td id="r3A">0</td><td id="r3W">-</td></tr>
+                <tr style="font-weight: bold; background: #090d16;">
+                  <td>4th Pt</td>
+                  <td id="totH">0 (0w)</td>
+                  <td id="totA">0 (0w)</td>
+                  <td id="r4W">-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Live Matchup Round-by-Round Progress Section -->
+          <div class="matchup-progress-card">
+            <h4><span>Individual Match-ups Round Progress</span> <span id="progressSummaryCount" style="color:var(--text-muted);">0/15 Played</span></h4>
+            <table class="summary-table">
+              <thead>
+                <tr>
+                  <th>Slot</th>
+                  <th id="mProgHomeHeader">Home</th>
+                  <th>R1</th>
+                  <th>R2</th>
+                  <th>R3</th>
+                  <th>Total</th>
+                  <th id="mProgAwayHeader">Away</th>
+                </tr>
+              </thead>
+              <tbody id="matchupProgressTableBody"></tbody>
+            </table>
           </div>
         </div>
 
-        <button id="saveGameBtn" style="width: 100%; margin-bottom: 6px;" class="enter-btn">Submit Game Result</button>
-      </div>
-
-      <!-- Team Round Summary Table -->
-      <div class="summary-table-wrap">
-        <table class="summary-table">
-          <thead>
-            <tr>
-              <th>Round</th>
-              <th id="thHome">Home</th>
-              <th id="thAway">Away</th>
-              <th>Winner</th>
-            </tr>
-          </thead>
-          <tbody id="summaryTableBody">
-            <tr id="rowR1" class="r1-row"><td>R1</td><td id="r1H">0</td><td id="r1A">0</td><td id="r1W">-</td></tr>
-            <tr id="rowR2" class="r2-row"><td>R2</td><td id="r2H">0</td><td id="r2A">0</td><td id="r2W">-</td></tr>
-            <tr id="rowR3" class="r3-row"><td>R3</td><td id="r3H">0</td><td id="r3A">0</td><td id="r3W">-</td></tr>
-            <tr style="font-weight: bold; background: #090d16;">
-              <td>4th Pt</td>
-              <td id="totH">0 (0w)</td>
-              <td id="totA">0 (0w)</td>
-              <td id="r4W">-</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Live Matchup Round-by-Round Progress Section (Below 4th Point Row) -->
-      <div class="matchup-progress-card">
-        <h4><span>Individual Match-ups Round Progress</span> <span id="progressSummaryCount" style="color:var(--text-muted);">0/15 Played</span></h4>
-        <table class="summary-table">
-          <thead>
-            <tr>
-              <th>Slot</th>
-              <th id="mProgHomeHeader">Home</th>
-              <th>R1</th>
-              <th>R2</th>
-              <th>R3</th>
-              <th>Total</th>
-              <th id="mProgAwayHeader">Away</th>
-            </tr>
-          </thead>
-          <tbody id="matchupProgressTableBody"></tbody>
-        </table>
-      </div>
-
-      <!-- Game Edit Controls -->
-      <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 8px; flex-shrink: 0; align-items: center;">
-        <button id="undoGameBtn" class="secondary" style="font-size: 11px; padding: 6px 10px;">Undo Last</button>
-        <button id="endMatchBtn" class="danger" style="font-size: 11px; padding: 6px 10px;">Exit</button>
+        <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 10px; flex-shrink: 0; align-items: center;">
+          <button id="backToScoringBtn" class="secondary" style="font-size: 11px; padding: 6px 10px;">Back to Scoring</button>
+        </div>
       </div>
     </div>
   </div>
@@ -516,6 +725,7 @@
   <script>
     let globalSchedules = [];
     let globalRosters = [];
+    let rosterHeaders = [];
 
     let currentHomeTeam = "Home Team";
     let currentAwayTeam = "Away Team";
@@ -523,10 +733,11 @@
     let home5Players = [];
     let away5Players = [];
 
-    let currentRound = 1;
-    let currentGame = 1;
-    let isEditingPastGame = false;
-    let editingGameIndex = -1;
+    let homeLocked = false;
+    let awayLocked = false;
+
+    let activeRound = 1;
+    let activeGame = 1;
 
     let selectedHomePts = 10;
     let selectedAwayPts = 0;
@@ -572,6 +783,9 @@
     document.getElementById('dateSelect').addEventListener('change', handleDateChange);
     document.getElementById('matchSelect').addEventListener('change', handleMatchChange);
 
+    document.getElementById('lockHomeBtn').addEventListener('click', () => toggleTeamLock('home'));
+    document.getElementById('lockAwayBtn').addEventListener('click', () => toggleTeamLock('away'));
+
     document.getElementById('startMatchBtn').addEventListener('click', openMatchModal);
     document.getElementById('saveGameBtn').addEventListener('click', submitGame);
     document.getElementById('undoGameBtn').addEventListener('click', undoGame);
@@ -583,6 +797,78 @@
     });
 
     document.getElementById('roundNavSelect').addEventListener('change', handleRoundNavChange);
+
+    document.getElementById('matchReviewTabBtn').addEventListener('click', () => switchModalTab('review'));
+    document.getElementById('backToScoringBtn').addEventListener('click', () => switchModalTab('scoring'));
+
+    function toggleTeamLock(side) {
+      if (side === 'home') {
+        homeLocked = !homeLocked;
+        setTeamInputDisabled('home', homeLocked);
+        const lockBtn = document.getElementById('lockHomeBtn');
+        if (homeLocked) {
+          lockBtn.textContent = '🔓 Home Lineup Locked (Click to Unlock)';
+          lockBtn.classList.add('locked');
+        } else {
+          lockBtn.textContent = '🔒 Lock Home Lineup';
+          lockBtn.classList.remove('locked');
+        }
+      } else {
+        awayLocked = !awayLocked;
+        setTeamInputDisabled('away', awayLocked);
+        const lockBtn = document.getElementById('lockAwayBtn');
+        if (awayLocked) {
+          lockBtn.textContent = '🔓 Away Lineup Locked (Click to Unlock)';
+          lockBtn.classList.add('locked');
+        } else {
+          lockBtn.textContent = '🔒 Lock Away Lineup';
+          lockBtn.classList.remove('locked');
+        }
+      }
+      updateStartMatchButtonState();
+    }
+
+    function setTeamInputDisabled(prefix, disabled) {
+      for (let i = 1; i <= 5; i++) {
+        document.getElementById(`${prefix}P${i}`).disabled = disabled;
+        document.getElementById(`${prefix}NpName${i}`).disabled = disabled;
+        document.getElementById(`${prefix}Hc${i}`).disabled = disabled;
+        document.getElementById(`${prefix}NpBtn${i}`).disabled = disabled;
+      }
+    }
+
+    function updateStartMatchButtonState() {
+      const startBtn = document.getElementById('startMatchBtn');
+      if (homeLocked && awayLocked) {
+        startBtn.disabled = false;
+        startBtn.textContent = "ENTER SCORE";
+      } else {
+        startBtn.disabled = true;
+        if (!homeLocked && !awayLocked) {
+          startBtn.textContent = "ENTER SCORE (Lock Both Lineups First)";
+        } else if (!homeLocked) {
+          startBtn.textContent = "ENTER SCORE (Waiting for Home Lock)";
+        } else {
+          startBtn.textContent = "ENTER SCORE (Waiting for Away Lock)";
+        }
+      }
+    }
+
+    function switchModalTab(tabName) {
+      const scoringTab = document.getElementById('scoringTab');
+      const reviewTab = document.getElementById('reviewTab');
+      const reviewBtn = document.getElementById('matchReviewTabBtn');
+
+      if (tabName === 'review') {
+        scoringTab.classList.add('hidden');
+        reviewTab.classList.remove('hidden');
+        reviewBtn.classList.add('active');
+      } else {
+        reviewTab.classList.add('hidden');
+        scoringTab.classList.remove('hidden');
+        reviewBtn.classList.remove('active');
+      }
+    }
 
     function buildPtsButtons(containerId, side) {
       const container = document.getElementById(containerId);
@@ -693,14 +979,40 @@
             <input type="text" id="${prefix}NpName${i}" placeholder="Enter New Player..." />
           </div>
           <select id="${prefix}Hc${i}" class="hc-select" title="Handicap (0-3)">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
+            <option value="0">HC: 0</option>
+            <option value="1">HC: 1</option>
+            <option value="2">HC: 2</option>
+            <option value="3">HC: 3</option>
           </select>
           <button type="button" class="np-btn" id="${prefix}NpBtn${i}" onclick="toggleNpTag('${prefix}', ${i})">+NP</button>
         `;
         container.appendChild(div);
+        
+        // Add change listener to auto-update select handicap if matched from sheet
+        document.getElementById(`${prefix}P${i}`).addEventListener('change', () => autoSetHandicapFromSelection(prefix, i));
+      }
+    }
+
+    function autoSetHandicapFromSelection(prefix, slot) {
+      const select = document.getElementById(`${prefix}P${slot}`);
+      const selectedPlayerName = select.value;
+      if (!selectedPlayerName) return;
+
+      const teamName = prefix === 'home' ? currentHomeTeam : currentAwayTeam;
+      const rosterRecord = globalRosters.find(r => 
+        r[COL.ROST_TEAM] && r[COL.ROST_TEAM].trim().toLowerCase() === teamName.trim().toLowerCase() &&
+        r[COL.ROST_PLAYER] && r[COL.ROST_PLAYER].trim().toLowerCase() === selectedPlayerName.trim().toLowerCase()
+      );
+
+      if (rosterRecord) {
+        // Find if there is an HC column index
+        const hcColIdx = rosterHeaders.findIndex(h => h === 'hc' || h === 'handicap');
+        if (hcColIdx !== -1 && rosterRecord[hcColIdx] !== undefined) {
+          const val = parseInt(rosterRecord[hcColIdx], 10);
+          if (!isNaN(val) && val >= 0 && val <= 3) {
+            document.getElementById(`${prefix}Hc${slot}`).value = val;
+          }
+        }
       }
     }
 
@@ -787,12 +1099,23 @@
       const lines = csvText.split(/\r?\n/);
       globalSchedules = [];
       globalRosters = [];
+      rosterHeaders = [];
+
+      let isFirstRosterHeader = true;
+
       lines.forEach(line => {
         if (!line.trim()) return;
         const cols = parseCSVLine(line);
         const tag = (cols[COL.TYPE] || '').trim().toUpperCase();
-        if (tag === 'SCHEDULE') globalSchedules.push(cols);
-        else if (tag === 'ROSTER') globalRosters.push(cols);
+        if (tag === 'SCHEDULE') {
+          globalSchedules.push(cols);
+        } else if (tag === 'ROSTER') {
+          if (isFirstRosterHeader) {
+            rosterHeaders = cols.map(c => c.toLowerCase());
+            isFirstRosterHeader = false;
+          }
+          globalRosters.push(cols);
+        }
       });
       populateDateDropdown();
     }
@@ -851,6 +1174,9 @@
       document.getElementById('homeRosterHeader').textContent = `${currentHomeTeam} Lineup`;
       document.getElementById('awayRosterHeader').textContent = `${currentAwayTeam} Lineup`;
 
+      if (homeLocked) toggleTeamLock('home');
+      if (awayLocked) toggleTeamLock('away');
+
       populateRosterDropdowns('home', currentHomeTeam);
       populateRosterDropdowns('away', currentAwayTeam);
     }
@@ -867,7 +1193,10 @@
           opt.textContent = playerName;
           select.appendChild(opt);
         });
-        if (teamRoster[i - 1]) select.selectedIndex = i;
+        if (teamRoster[i - 1]) {
+          select.selectedIndex = i;
+          autoSetHandicapFromSelection(prefix, i);
+        }
       }
     }
 
@@ -879,14 +1208,23 @@
       if (isNp) {
         const npNameInput = document.getElementById(`${prefix}NpName${slot}`).value.trim();
         name = npNameInput || `New Player ${slot}`;
-        return `${name} (Np) [HC:${hc}]`;
+        return `${name} (Np) <span class="hc-badge">[HC:${hc}]</span>`;
       } else {
         name = document.getElementById(`${prefix}P${slot}`).value || `${prefix.toUpperCase()} P${slot}`;
-        return `${name} [HC:${hc}]`;
+        return `${name} <span class="hc-badge">[HC:${hc}]</span>`;
       }
     }
 
+    function getPlainPlayerName(prefix, slot) {
+      const hc = document.getElementById(`${prefix}Hc${slot}`).value;
+      const isNp = document.getElementById(`${prefix}NpBtn${slot}`).classList.contains('active');
+      let name = isNp ? (document.getElementById(`${prefix}NpName${slot}`).value.trim() || `New Player ${slot}`) : (document.getElementById(`${prefix}P${slot}`).value || `${prefix.toUpperCase()} P${slot}`);
+      return { name, hc: parseInt(hc, 10) || 0 };
+    }
+
     function openMatchModal() {
+      if (!homeLocked || !awayLocked) return;
+
       home5Players = [];
       away5Players = [];
       for (let i = 1; i <= 5; i++) {
@@ -898,61 +1236,94 @@
       document.getElementById('mProgHomeHeader').textContent = currentHomeTeam;
       document.getElementById('mProgAwayHeader').textContent = currentAwayTeam;
 
-      setPlayerScore('home', 10);
-      setPlayerScore('away', 0);
+      activeRound = 1;
+      activeGame = 1;
+
+      loadActiveGameData();
+      switchModalTab('scoring');
       updateModalUI();
       document.getElementById('scoreModal').classList.remove('hidden');
+    }
+
+    function loadActiveGameData() {
+      const existingIdx = gameHistory.findIndex(g => g.round === activeRound && g.game === activeGame);
+      if (existingIdx >= 0) {
+        const g = gameHistory[existingIdx];
+        setPlayerScore('home', g.hPts);
+        setPlayerScore('away', g.aPts);
+        home8bbActive = g.h8bb;
+        homeTrActive = g.hTr;
+        away8bbActive = g.a8bb;
+        awayTrActive = g.aTr;
+      } else {
+        setPlayerScore('home', 10);
+        setPlayerScore('away', 0);
+        home8bbActive = false;
+        homeTrActive = false;
+        away8bbActive = false;
+        awayTrActive = false;
+      }
     }
 
     function submitGame() {
       const hPts = selectedHomePts;
       const aPts = selectedAwayPts;
 
-      if (isEditingPastGame && editingGameIndex >= 0) {
-        gameHistory[editingGameIndex] = {
-          ...gameHistory[editingGameIndex],
-          hPts, aPts,
-          h8bb: home8bbActive, hTr: homeTrActive,
-          a8bb: away8bbActive, aTr: awayTrActive
-        };
-        recalculateAllScoresFromHistory();
-        isEditingPastGame = false;
-        editingGameIndex = -1;
+      const homeIdx = activeGame - 1;
+      const awayIdx = (activeGame - 1 + (activeRound - 1)) % 5;
+
+      const homeObj = getPlainPlayerName('home', homeIdx + 1);
+      const awayObj = getPlainPlayerName('away', awayIdx + 1);
+
+      const homePlayer = home5Players[homeIdx];
+      const awayPlayer = away5Players[awayIdx];
+
+      // Calculate Net Handicap Adjusted Points per game/round rules
+      // If home HC > away HC, difference is added to away (or vice-versa depending on league rules, standard is handicap points awarded to lower handicap/adjusted)
+      // Let's integrate standard net handicap points calculation or differential accounting:
+      const hcDiff = homeObj.hc - awayObj.hc;
+      // If home has higher HC, away gets handicap points or vice-versa. Let's add handicap accounting cleanly:
+      let effectiveHPts = hPts;
+      let effectiveAPts = aPts;
+      
+      // We will keep base performance + handicap adjustments tracked per game history entry
+      const existingIdx = gameHistory.findIndex(g => g.round === activeRound && g.game === activeGame);
+
+      const gameData = {
+        round: activeRound,
+        game: activeGame,
+        hPts, aPts,
+        hcDiff,
+        h8bb: home8bbActive, hTr: homeTrActive,
+        a8bb: away8bbActive, aTr: awayTrActive,
+        homeIdx, awayIdx, homePlayer, awayPlayer,
+        homeHc: homeObj.hc, awayHc: awayObj.hc
+      };
+
+      if (existingIdx >= 0) {
+        gameHistory[existingIdx] = gameData;
       } else {
-        const homeIdx = currentGame - 1;
-        const awayIdx = (currentGame - 1 + (currentRound - 1)) % 5;
+        gameHistory.push(gameData);
+      }
 
-        const homePlayer = home5Players[homeIdx];
-        const awayPlayer = away5Players[awayIdx];
+      recalculateAllScoresFromHistory();
 
-        gameHistory.push({
-          round: currentRound,
-          game: currentGame,
-          hPts, aPts,
-          h8bb: home8bbActive, hTr: homeTrActive,
-          a8bb: away8bbActive, aTr: awayTrActive,
-          homeIdx, awayIdx, homePlayer, awayPlayer
-        });
-
-        recalculateAllScoresFromHistory();
-
-        if (gameHistory.length < 15) {
-          const totalPlayed = gameHistory.length;
-          currentRound = Math.floor(totalPlayed / 5) + 1;
-          currentGame = (totalPlayed % 5) + 1;
-        } else {
-          alert("All 3 rounds (15 games) completed!");
+      if (gameHistory.length < 15) {
+        let foundNext = false;
+        for (let r = 1; r <= 3; r++) {
+          for (let g = 1; g <= 5; g++) {
+            if (!gameHistory.some(gh => gh.round === r && gh.game === g)) {
+              activeRound = r;
+              activeGame = g;
+              foundNext = true;
+              break;
+            }
+          }
+          if (foundNext) break;
         }
       }
 
-      home8bbActive = false;
-      homeTrActive = false;
-      away8bbActive = false;
-      awayTrActive = false;
-
-      setPlayerScore('home', 10);
-      setPlayerScore('away', 0);
-
+      loadActiveGameData();
       updateModalUI();
       updateScorebugUI();
     }
@@ -966,68 +1337,47 @@
 
       gameHistory.forEach(g => {
         const r = g.round;
-        roundScores[r].homePts += g.hPts;
-        roundScores[r].awayPts += g.aPts;
+        // Account for handicap differential if applicable (e.g., adding hcDiff to respective score)
+        let adjHPts = g.hPts;
+        let adjAPts = g.aPts;
+        
+        if (g.hcDiff > 0) {
+          adjAPts += g.hcDiff;
+        } else if (g.hcDiff < 0) {
+          adjHPts += Math.abs(g.hcDiff);
+        }
+
+        roundScores[r].homePts += adjHPts;
+        roundScores[r].awayPts += adjAPts;
         if (g.hPts === 10) roundScores[r].homeWins += 1;
         if (g.aPts === 10) roundScores[r].awayWins += 1;
       });
     }
 
     function undoGame() {
-      if (gameHistory.length === 0) return;
-      gameHistory.pop();
-
-      isEditingPastGame = false;
-      editingGameIndex = -1;
+      const existingIdx = gameHistory.findIndex(g => g.round === activeRound && g.game === activeGame);
+      if (existingIdx >= 0) {
+        gameHistory.splice(existingIdx, 1);
+      } else if (gameHistory.length > 0) {
+        const last = gameHistory.pop();
+        activeRound = last.round;
+        activeGame = last.game;
+      }
 
       recalculateAllScoresFromHistory();
-
-      const totalPlayed = gameHistory.length;
-      currentRound = Math.floor(totalPlayed / 5) + 1;
-      if (currentRound > 3) currentRound = 3;
-      currentGame = (totalPlayed % 5) + 1;
-      if (currentGame > 5) currentGame = 5;
-
-      setPlayerScore('home', 10);
-      setPlayerScore('away', 0);
-      home8bbActive = false;
-      homeTrActive = false;
-      away8bbActive = false;
-      awayTrActive = false;
-
+      loadActiveGameData();
       updateModalUI();
       updateScorebugUI();
     }
 
     function handleRoundNavChange(e) {
-      const val = e.target.value;
-      if (val === "CURRENT") {
-        isEditingPastGame = false;
-        editingGameIndex = -1;
-        setPlayerScore('home', 10);
-        setPlayerScore('away', 0);
-        home8bbActive = false;
-        homeTrActive = false;
-        away8bbActive = false;
-        awayTrActive = false;
-        updateModalUI();
-      } else {
-        const gIdx = parseInt(val, 10);
-        if (!isNaN(gIdx) && gameHistory[gIdx]) {
-          isEditingPastGame = true;
-          editingGameIndex = gIdx;
-          const targetGame = gameHistory[gIdx];
+      const [r, g] = e.target.value.split('-').map(Number);
+      activeRound = r;
+      activeGame = g;
 
-          setPlayerScore('home', targetGame.hPts);
-          setPlayerScore('away', targetGame.aPts);
-          home8bbActive = targetGame.h8bb;
-          homeTrActive = targetGame.hTr;
-          away8bbActive = targetGame.a8bb;
-          awayTrActive = targetGame.aTr;
-
-          updateModalUI();
-        }
-      }
+      loadActiveGameData();
+      updateScoreButtonStates();
+      updateModalUI();
     }
 
     function calculateMatchTotals() {
@@ -1072,54 +1422,48 @@
 
     function updateModalUI() {
       const root = document.documentElement;
-      let activeRound = currentRound;
-      let activeGame = currentGame;
-
-      if (isEditingPastGame && editingGameIndex >= 0) {
-        const g = gameHistory[editingGameIndex];
-        activeRound = g.round;
-        activeGame = g.game;
-      }
 
       let activeColor = "var(--r1-color)";
       if (activeRound === 2) activeColor = "var(--r2-color)";
       if (activeRound === 3) activeColor = "var(--r3-color)";
       root.style.setProperty('--active-round-color', activeColor);
 
-      // Update Round/Game Dropdown Selector
       const navSelect = document.getElementById('roundNavSelect');
       navSelect.innerHTML = '';
 
-      const currentOpt = document.createElement('option');
-      currentOpt.value = "CURRENT";
-      currentOpt.textContent = `Round ${currentRound} • Game ${currentGame}/5 (Live Current)`;
-      navSelect.appendChild(currentOpt);
-
-      if (gameHistory.length > 0) {
+      for (let r = 1; r <= 3; r++) {
         const optGroup = document.createElement('optgroup');
-        optGroup.label = "Edit Recorded Game";
-        gameHistory.forEach((g, idx) => {
+        optGroup.label = `--- ROUND ${r} ---`;
+
+        for (let g = 1; g <= 5; g++) {
+          const homeP = home5Players[g - 1] || `Home P${g}`;
+          const awayP = away5Players[(g - 1 + (r - 1)) % 5] || `Away P${g}`;
+          const cleanHome = homeP.replace(/<\/?[^>]+(>|$)/g, "").split('[')[0].trim();
+          const cleanAway = awayP.replace(/<\/?[^>]+(>|$)/g, "").split('[')[0].trim();
+
+          const recorded = gameHistory.find(gh => gh.round === r && gh.game === g);
+          const statusTag = recorded ? ` (${recorded.hPts}-${recorded.aPts})` : '';
+
           const opt = document.createElement('option');
-          opt.value = idx;
-          opt.textContent = `R${g.round} Game ${g.game}: ${g.homePlayer} vs ${g.awayPlayer}`;
+          opt.value = `${r}-${g}`;
+          opt.textContent = `R${r} G${g}: ${cleanHome} vs ${cleanAway}${statusTag}`;
           optGroup.appendChild(opt);
-        });
+        }
         navSelect.appendChild(optGroup);
       }
 
-      if (isEditingPastGame && editingGameIndex >= 0) {
-        navSelect.value = editingGameIndex;
-        document.getElementById('saveGameBtn').textContent = `Save Edit (R${activeRound} Game ${activeGame})`;
-      } else {
-        navSelect.value = "CURRENT";
-        document.getElementById('saveGameBtn').textContent = "Submit Game Result";
-      }
+      navSelect.value = `${activeRound}-${activeGame}`;
+
+      const existingRecord = gameHistory.some(gh => gh.round === activeRound && gh.game === activeGame);
+      document.getElementById('saveGameBtn').textContent = existingRecord 
+        ? `Update Result (R${activeRound} G${activeGame})` 
+        : `Submit Game Result (R${activeRound} G${activeGame})`;
 
       const curHomeP = home5Players[activeGame - 1] || `Home P${activeGame}`;
       const curAwayP = away5Players[(activeGame - 1 + (activeRound - 1)) % 5] || `Away P${activeGame}`;
 
-      document.getElementById('mHomePlayerLbl').textContent = curHomeP;
-      document.getElementById('mAwayPlayerLbl').textContent = curAwayP;
+      document.getElementById('mHomePlayerLbl').innerHTML = curHomeP;
+      document.getElementById('mAwayPlayerLbl').innerHTML = curAwayP;
 
       const totals = calculateMatchTotals();
 
@@ -1144,8 +1488,92 @@
       document.getElementById('r4W').textContent = totals.r4Winner;
 
       renderMatchupProgressTable();
+      renderPlayerHeadToHead(activeGame - 1, (activeGame - 1 + (activeRound - 1)) % 5);
       updateRunButtonStates();
       updateScoreButtonStates();
+    }
+
+    function renderPlayerHeadToHead(homeIdx, awayIdx) {
+      const hPlayer = home5Players[homeIdx] || `Home P${homeIdx+1}`;
+      const aPlayer = away5Players[awayIdx] || `Away P${awayIdx+1}`;
+
+      const getHc = (str) => {
+        const m = str.match(/\[HC:(\d+)\]/);
+        return m ? m[1] : '0';
+      };
+
+      const hHc = getHc(hPlayer);
+      const aHc = getHc(aPlayer);
+
+      document.getElementById('pvpHomeName').innerHTML = hPlayer;
+      document.getElementById('pvpAwayName').innerHTML = aPlayer;
+      document.getElementById('pvpThHome').innerHTML = `${hPlayer.replace(/<\/?[^>]+(>|$)/g, "").split('[')[0].trim()} <span style="color:var(--yellow-accent);">(HC:${hHc})</span>`;
+      document.getElementById('pvpThAway').innerHTML = `${aPlayer.replace(/<\/?[^>]+(>|$)/g, "").split('[')[0].trim()} <span style="color:var(--yellow-accent);">(HC:${aHc})</span>`;
+      document.getElementById('pvpHandicapSummary').innerHTML = `HC Points: Home +${hHc} | Away +${aHc}`;
+
+      const tbody = document.getElementById('pvpTableBody');
+      tbody.innerHTML = '';
+
+      let totalHPts = 0;
+      let totalAPts = 0;
+
+      for (let r = 1; r <= 3; r++) {
+        const rAwayIdx = (homeIdx + (r - 1)) % 5;
+        const matchGame = gameHistory.find(g => g.round === r && g.homeIdx === homeIdx && g.awayIdx === rAwayIdx);
+
+        const tr = document.createElement('tr');
+        if (matchGame) {
+          let adjHPts = matchGame.hPts;
+          let adjAPts = matchGame.aPts;
+          if (matchGame.hcDiff > 0) adjAPts += matchGame.hcDiff;
+          else if (matchGame.hcDiff < 0) adjHPts += Math.abs(matchGame.hcDiff);
+
+          totalHPts += adjHPts;
+          totalAPts += adjAPts;
+
+          let hBadges = (matchGame.h8bb ? '<span class="badge">8BB</span>' : '') + (matchGame.hTr ? '<span class="badge">TR</span>' : '');
+          let aBadges = (matchGame.a8bb ? '<span class="badge">8BB</span>' : '') + (matchGame.aTr ? '<span class="badge">TR</span>' : '');
+
+          let winnerStr = '-';
+          if (adjHPts > adjAPts) winnerStr = `<span class="win-text">Home Win</span>`;
+          else if (adjAPts > adjHPts) winnerStr = `<span class="win-text" style="color:#f87171;">Away Win</span>`;
+
+          const isCurrentMatchup = (rAwayIdx === awayIdx);
+          tr.className = isCurrentMatchup ? 'active-row' : '';
+
+          tr.innerHTML = `
+            <td>R${r} ${rAwayIdx === awayIdx ? '(Current)' : ''}</td>
+            <td>${hBadges} ${matchGame.hPts}${matchGame.hcDiff < 0 ? ` <span style="color:var(--yellow-accent);">(+${Math.abs(matchGame.hcDiff)})</span>` : ''}</td>
+            <td>${matchGame.aPts}${matchGame.hcDiff > 0 ? ` <span style="color:var(--yellow-accent);">(+${matchGame.hcDiff})</span>` : ''} ${aBadges}</td>
+            <td>${winnerStr}</td>
+          `;
+        } else {
+          const isCurrentMatchup = (rAwayIdx === awayIdx);
+          tr.innerHTML = `
+            <td>R${r} ${isCurrentMatchup ? '(Current)' : ''}</td>
+            <td>-</td>
+            <td>-</td>
+            <td>Unplayed</td>
+          `;
+        }
+        tbody.appendChild(tr);
+      }
+
+      let overallWinner = '-';
+      if (totalHPts > totalAPts) overallWinner = `<span class="win-text">Home (+${totalHPts - totalAPts})</span>`;
+      else if (totalAPts > totalHPts) overallWinner = `<span class="win-text" style="color:#f87171;">Away (+${totalAPts - totalHPts})</span>`;
+      else if (totalHPts > 0) overallWinner = 'Tied';
+
+      const summaryTr = document.createElement('tr');
+      summaryTr.style.fontWeight = 'bold';
+      summaryTr.style.background = '#1e293b';
+      summaryTr.innerHTML = `
+        <td>Total Score</td>
+        <td id="pvpTotHome">${totalHPts} pts</td>
+        <td id="pvpTotAway">${totalAPts} pts</td>
+        <td id="pvpHeadWinner">${overallWinner}</td>
+      `;
+      tbody.appendChild(summaryTr);
     }
 
     function renderMatchupProgressTable() {
@@ -1155,9 +1583,9 @@
 
       const playerStats = Array.from({ length: 5 }, () => ({
         rounds: {
-          1: { hPts: '-', aPts: '-', hBadges: [], aBadges: [] },
-          2: { hPts: '-', aPts: '-', hBadges: [], aBadges: [] },
-          3: { hPts: '-', aPts: '-', hBadges: [], aBadges: [] }
+          1: { text: '-', hPts: 0, aPts: 0 },
+          2: { text: '-', hPts: 0, aPts: 0 },
+          3: { text: '-', hPts: 0, aPts: 0 }
         },
         totalH: 0, totalA: 0
       }));
@@ -1166,15 +1594,20 @@
         const hIdx = g.homeIdx;
         const r = g.round;
         
-        playerStats[hIdx].rounds[r].hPts = g.hPts;
-        playerStats[hIdx].rounds[r].aPts = g.aPts;
-        if (g.h8bb) playerStats[hIdx].rounds[r].hBadges.push('8BB');
-        if (g.hTr) playerStats[hIdx].rounds[r].hBadges.push('TR');
-        if (g.a8bb) playerStats[hIdx].rounds[r].aBadges.push('8BB');
-        if (g.aTr) playerStats[hIdx].rounds[r].aBadges.push('TR');
+        let adjHPts = g.hPts;
+        let adjAPts = g.aPts;
+        if (g.hcDiff > 0) adjAPts += g.hcDiff;
+        else if (g.hcDiff < 0) adjHPts += Math.abs(g.hcDiff);
 
-        playerStats[hIdx].totalH += g.hPts;
-        playerStats[hIdx].totalA += g.aPts;
+        let hBadges = (g.h8bb ? '<span class="badge">8BB</span>' : '') + (g.hTr ? '<span class="badge">TR</span>' : '');
+        let aBadges = (g.a8bb ? '<span class="badge">8BB</span>' : '') + (g.aTr ? '<span class="badge">TR</span>' : '');
+
+        playerStats[hIdx].rounds[r].text = `${hBadges}${g.hPts}-${g.aPts}${aBadges}`;
+        playerStats[hIdx].rounds[r].hPts = adjHPts;
+        playerStats[hIdx].rounds[r].aPts = adjAPts;
+
+        playerStats[hIdx].totalH += adjHPts;
+        playerStats[hIdx].totalA += adjAPts;
       });
 
       for (let i = 0; i < 5; i++) {
@@ -1183,22 +1616,15 @@
         const aName = away5Players[i] || `Away P${i+1}`;
         const st = playerStats[i];
 
-        function formatRoundCell(rData) {
-          if (rData.hPts === '-') return '-';
-          const hBadges = rData.hBadges.map(b => `<span class="badge">${b}</span>`).join('');
-          const aBadges = rData.aBadges.map(b => `<span class="badge">${b}</span>`).join('');
-          return `${hBadges}${rData.hPts}-${rData.aPts}${aBadges}`;
-        }
-
         const hWinCls = st.totalH > st.totalA ? 'win-text' : '';
         const aWinCls = st.totalA > st.totalH ? 'win-text' : '';
 
         tr.innerHTML = `
           <td>P${i+1}</td>
           <td class="${hWinCls}" style="text-align: left; font-size:11px;">${hName}</td>
-          <td style="font-size: 10px;">${formatRoundCell(st.rounds[1])}</td>
-          <td style="font-size: 10px;">${formatRoundCell(st.rounds[2])}</td>
-          <td style="font-size: 10px;">${formatRoundCell(st.rounds[3])}</td>
+          <td style="font-size: 10px;">${st.rounds[1].text}</td>
+          <td style="font-size: 10px;">${st.rounds[2].text}</td>
+          <td style="font-size: 10px;">${st.rounds[3].text}</td>
           <td><strong>${st.totalH}-${st.totalA}</strong></td>
           <td class="${aWinCls}" style="text-align: right; font-size:11px;">${aName}</td>
         `;
@@ -1210,8 +1636,8 @@
       const totals = calculateMatchTotals();
       document.getElementById('homeTeamMatchPts').textContent = totals.teamPoints.home;
       document.getElementById('awayTeamMatchPts').textContent = totals.teamPoints.away;
-      document.getElementById('homePtsDetail').textContent = `Points: ${totals.totalPts.home} | Wins: ${totals.totalWins.home}`;
-      document.getElementById('awayPtsDetail').textContent = `Points: ${totals.totalPts.away} | Wins: ${totals.totalWins.away}`;
+      document.getElementById('homePtsDetail').textContent = `Pts: ${totals.totalPts.home} | Wins: ${totals.totalWins.home}`;
+      document.getElementById('awayPtsDetail').textContent = `Pts: ${totals.totalPts.away} | Wins: ${totals.totalWins.away}`;
     }
   </script>
 </body>
