@@ -137,7 +137,7 @@
     }
     .roster-slot span { font-weight: bold; color: #60a5fa; width: 22px; flex-shrink: 0; }
 
-    .hc-select { width: 55px !important; text-align: center; color: var(--yellow-accent) !important; font-weight: bold; }
+    .hc-select { width: 62px !important; text-align: center; color: var(--yellow-accent) !important; font-weight: bold; }
     .np-btn {
       padding: 6px 8px;
       font-size: 10px;
@@ -451,6 +451,42 @@
     .pvp-table th, .pvp-table td { border: 1px solid var(--border-color); padding: 5px 3px; text-align: center; }
     .pvp-table th { background: #1e293b; color: var(--text-muted); font-weight: 600; }
 
+    /* Live Game Breakdown Card */
+    .live-game-breakdown {
+      background: #090d16;
+      border: 1px solid var(--yellow-accent);
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin: 6px 0;
+      flex-shrink: 0;
+    }
+    .live-breakdown-title {
+      font-size: 11px;
+      color: var(--yellow-accent);
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .live-breakdown-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .live-score-highlight {
+      background: var(--yellow-accent);
+      color: #000;
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 900;
+      min-width: 64px;
+      text-align: center;
+    }
+
     /* Review View Containers */
     .review-inner-container {
       display: flex;
@@ -623,6 +659,21 @@
             </div>
           </div>
 
+          <!-- Live Game Breakdown Section -->
+          <div class="live-game-breakdown">
+            <div class="live-breakdown-title">
+              <span id="lbRoundGameTitle">Round 1 Game 1</span>
+              <span id="lbPlayerNamesTitle">Player 1 vs Player 2</span>
+            </div>
+            <div class="live-breakdown-grid">
+              <div id="lbHomeBreakdown" style="color: var(--text-muted); font-size: 12px;"></div>
+              <div class="live-score-highlight" id="lbHomeTotal">-</div>
+              <div style="color: var(--text-muted);">VS</div>
+              <div class="live-score-highlight" id="lbAwayTotal">-</div>
+              <div id="lbAwayBreakdown" style="text-align: right; color: var(--text-muted); font-size: 12px;"></div>
+            </div>
+          </div>
+
           <button id="saveGameBtn" style="width: 100%; margin-bottom: 6px;" class="enter-btn">Submit Game Result</button>
 
           <!-- Player vs. Player Live Match Review -->
@@ -739,8 +790,8 @@
     let activeRound = 1;
     let activeGame = 1;
 
-    let selectedHomePts = 10;
-    let selectedAwayPts = 0;
+    let selectedHomePts = null;
+    let selectedAwayPts = null;
 
     let home8bbActive = false;
     let homeTrActive = false;
@@ -880,7 +931,10 @@
         btn.className = `pts-btn ${val === 10 ? 'winner-btn' : ''}`;
         btn.textContent = val === 10 ? '10 W' : val;
         btn.dataset.val = val;
-        btn.addEventListener('click', () => setPlayerScore(side, val));
+        btn.addEventListener('click', () => {
+          setPlayerScore(side, val);
+          updateLiveGameBreakdownCard();
+        });
         container.appendChild(btn);
       });
     }
@@ -917,15 +971,20 @@
       }
       updateRunButtonStates();
       updateScoreButtonStates();
+      updateLiveGameBreakdownCard();
     }
 
     function setPlayerScore(side, score) {
       if (side === 'home') {
         selectedHomePts = score;
         if (score === 10) {
-          selectedAwayPts = 0;
-          away8bbActive = false;
-          awayTrActive = false;
+          home8bbActive = false;
+          homeTrActive = false;
+          if (selectedAwayPts === 10) {
+            selectedAwayPts = 0;
+            away8bbActive = false;
+            awayTrActive = false;
+          }
         } else {
           home8bbActive = false;
           homeTrActive = false;
@@ -933,9 +992,13 @@
       } else {
         selectedAwayPts = score;
         if (score === 10) {
-          selectedHomePts = 0;
-          home8bbActive = false;
-          homeTrActive = false;
+          away8bbActive = false;
+          awayTrActive = false;
+          if (selectedHomePts === 10) {
+            selectedHomePts = 0;
+            home8bbActive = false;
+            homeTrActive = false;
+          }
         } else {
           away8bbActive = false;
           awayTrActive = false;
@@ -943,6 +1006,7 @@
       }
       updateRunButtonStates();
       updateScoreButtonStates();
+      updateLiveGameBreakdownCard();
     }
 
     function updateRunButtonStates() {
@@ -955,13 +1019,13 @@
     function updateScoreButtonStates() {
       const homeBtns = document.querySelectorAll('#homePtsBar .pts-btn');
       homeBtns.forEach(b => {
-        if (parseInt(b.dataset.val, 10) === selectedHomePts) b.classList.add('active');
+        if (selectedHomePts !== null && parseInt(b.dataset.val, 10) === selectedHomePts) b.classList.add('active');
         else b.classList.remove('active');
       });
 
       const awayBtns = document.querySelectorAll('#awayPtsBar .pts-btn');
       awayBtns.forEach(b => {
-        if (parseInt(b.dataset.val, 10) === selectedAwayPts) b.classList.add('active');
+        if (selectedAwayPts !== null && parseInt(b.dataset.val, 10) === selectedAwayPts) b.classList.add('active');
         else b.classList.remove('active');
       });
     }
@@ -969,6 +1033,12 @@
     function renderPlayerInputs(containerId, prefix) {
       const container = document.getElementById(containerId);
       container.innerHTML = '';
+      
+      let hcOptionsHTML = '<option value="">HC</option>';
+      for (let h = 0; h <= 10; h++) {
+        hcOptionsHTML += `<option value="${h}">${h}</option>`;
+      }
+
       for (let i = 1; i <= 5; i++) {
         const div = document.createElement('div');
         div.className = 'roster-slot';
@@ -978,19 +1048,20 @@
           <div class="np-input-wrap" id="${prefix}NpWrap${i}">
             <input type="text" id="${prefix}NpName${i}" placeholder="Enter New Player..." />
           </div>
-          <select id="${prefix}Hc${i}" class="hc-select" title="Handicap (0-3)">
-            <option value="0">HC: 0</option>
-            <option value="1">HC: 1</option>
-            <option value="2">HC: 2</option>
-            <option value="3">HC: 3</option>
+          <select id="${prefix}Hc${i}" class="hc-select" title="Handicap (0-10)" onchange="updateHcIndicator('${prefix}', ${i})">
+            ${hcOptionsHTML}
           </select>
           <button type="button" class="np-btn" id="${prefix}NpBtn${i}" onclick="toggleNpTag('${prefix}', ${i})">+NP</button>
         `;
         container.appendChild(div);
         
-        // Add change listener to auto-update select handicap if matched from sheet
         document.getElementById(`${prefix}P${i}`).addEventListener('change', () => autoSetHandicapFromSelection(prefix, i));
       }
+    }
+
+    function updateHcIndicator(prefix, slot) {
+      const hcSelect = document.getElementById(`${prefix}Hc${slot}`);
+      hcSelect.style.color = "var(--yellow-accent)";
     }
 
     function autoSetHandicapFromSelection(prefix, slot) {
@@ -1005,12 +1076,12 @@
       );
 
       if (rosterRecord) {
-        // Find if there is an HC column index
         const hcColIdx = rosterHeaders.findIndex(h => h === 'hc' || h === 'handicap');
         if (hcColIdx !== -1 && rosterRecord[hcColIdx] !== undefined) {
           const val = parseInt(rosterRecord[hcColIdx], 10);
-          if (!isNaN(val) && val >= 0 && val <= 3) {
+          if (!isNaN(val) && val >= 0 && val <= 10) {
             document.getElementById(`${prefix}Hc${slot}`).value = val;
+            updateHcIndicator(prefix, slot);
           }
         }
       }
@@ -1183,16 +1254,25 @@
 
     function populateRosterDropdowns(prefix, teamName) {
       const teamRoster = globalRosters.filter(r => r[COL.ROST_TEAM] && r[COL.ROST_TEAM].trim().toLowerCase() === teamName.trim().toLowerCase());
+      const hcColIdx = rosterHeaders.findIndex(h => h === 'hc' || h === 'handicap');
+
       for (let i = 1; i <= 5; i++) {
         const select = document.getElementById(`${prefix}P${i}`);
         select.innerHTML = `<option value="">-- Player ${i} --</option>`;
+        
         teamRoster.forEach((r, idx) => {
           const playerName = r[COL.ROST_PLAYER] ? r[COL.ROST_PLAYER].trim() : `Player ${idx + 1}`;
+          let hcDisplayVal = '';
+          if (hcColIdx !== -1 && r[hcColIdx] !== undefined && r[hcColIdx].trim() !== '') {
+            hcDisplayVal = ` (HC: ${r[hcColIdx].trim()})`;
+          }
+
           const opt = document.createElement('option');
           opt.value = playerName;
-          opt.textContent = playerName;
+          opt.textContent = `${playerName}${hcDisplayVal}`;
           select.appendChild(opt);
         });
+
         if (teamRoster[i - 1]) {
           select.selectedIndex = i;
           autoSetHandicapFromSelection(prefix, i);
@@ -1201,25 +1281,27 @@
     }
 
     function getFormattedPlayerName(prefix, slot) {
-      const hc = document.getElementById(`${prefix}Hc${slot}`).value;
+      const hcVal = document.getElementById(`${prefix}Hc${slot}`).value;
+      const hcDisplay = hcVal === "" ? "0" : hcVal;
       const isNp = document.getElementById(`${prefix}NpBtn${slot}`).classList.contains('active');
       let name = '';
 
       if (isNp) {
         const npNameInput = document.getElementById(`${prefix}NpName${slot}`).value.trim();
         name = npNameInput || `New Player ${slot}`;
-        return `${name} (Np) <span class="hc-badge">[HC:${hc}]</span>`;
+        return `${name} (Np) <span class="hc-badge">[HC:${hcDisplay}]</span>`;
       } else {
         name = document.getElementById(`${prefix}P${slot}`).value || `${prefix.toUpperCase()} P${slot}`;
-        return `${name} <span class="hc-badge">[HC:${hc}]</span>`;
+        return `${name} <span class="hc-badge">[HC:${hcDisplay}]</span>`;
       }
     }
 
     function getPlainPlayerName(prefix, slot) {
-      const hc = document.getElementById(`${prefix}Hc${slot}`).value;
+      const hcVal = document.getElementById(`${prefix}Hc${slot}`).value;
+      const hcNum = hcVal === "" ? 0 : parseInt(hcVal, 10);
       const isNp = document.getElementById(`${prefix}NpBtn${slot}`).classList.contains('active');
       let name = isNp ? (document.getElementById(`${prefix}NpName${slot}`).value.trim() || `New Player ${slot}`) : (document.getElementById(`${prefix}P${slot}`).value || `${prefix.toUpperCase()} P${slot}`);
-      return { name, hc: parseInt(hc, 10) || 0 };
+      return { name, hc: isNaN(hcNum) ? 0 : hcNum };
     }
 
     function openMatchModal() {
@@ -1256,16 +1338,57 @@
         away8bbActive = g.a8bb;
         awayTrActive = g.aTr;
       } else {
-        setPlayerScore('home', 10);
-        setPlayerScore('away', 0);
+        selectedHomePts = null;
+        selectedAwayPts = null;
         home8bbActive = false;
         homeTrActive = false;
         away8bbActive = false;
         awayTrActive = false;
+        updateScoreButtonStates();
+        updateRunButtonStates();
       }
+      updateLiveGameBreakdownCard();
+    }
+
+    function updateLiveGameBreakdownCard() {
+      const homeIdx = activeGame - 1;
+      const awayIdx = (activeGame - 1 + (activeRound - 1)) % 5;
+
+      const homeObj = getPlainPlayerName('home', homeIdx + 1);
+      const awayObj = getPlainPlayerName('away', awayIdx + 1);
+
+      let rawDiff = homeObj.hc - awayObj.hc;
+      let homeHcBonus = 0;
+      let awayHcBonus = 0;
+
+      if (rawDiff < 0) {
+        homeHcBonus = Math.min(3, Math.abs(rawDiff));
+      } else if (rawDiff > 0) {
+        awayHcBonus = Math.min(3, rawDiff);
+      }
+
+      let curHomeInput = selectedHomePts !== null ? selectedHomePts : 0;
+      let curAwayInput = selectedAwayPts !== null ? selectedAwayPts : 0;
+
+      let totalHome = curHomeInput + homeHcBonus;
+      let totalAway = curAwayInput + awayHcBonus;
+
+      document.getElementById('lbRoundGameTitle').textContent = `Round ${activeRound} Game ${activeGame}`;
+      document.getElementById('lbPlayerNamesTitle').textContent = `${homeObj.name} vs ${awayObj.name}`;
+      
+      document.getElementById('lbHomeBreakdown').textContent = homeHcBonus > 0 ? `(+${homeHcBonus} HC)` : '';
+      document.getElementById('lbAwayBreakdown').textContent = awayHcBonus > 0 ? `(+${awayHcBonus} HC)` : '';
+      
+      document.getElementById('lbHomeTotal').textContent = selectedHomePts !== null ? totalHome : '-';
+      document.getElementById('lbAwayTotal').textContent = selectedAwayPts !== null ? totalAway : '-';
     }
 
     function submitGame() {
+      if (selectedHomePts === null || selectedAwayPts === null) {
+        alert("Please select scores for both players before submitting.");
+        return;
+      }
+
       const hPts = selectedHomePts;
       const aPts = selectedAwayPts;
 
@@ -1275,28 +1398,18 @@
       const homeObj = getPlainPlayerName('home', homeIdx + 1);
       const awayObj = getPlainPlayerName('away', awayIdx + 1);
 
-      const homePlayer = home5Players[homeIdx];
-      const awayPlayer = away5Players[awayIdx];
-
-      // Calculate Net Handicap Adjusted Points per game/round rules
-      // If home HC > away HC, difference is added to away (or vice-versa depending on league rules, standard is handicap points awarded to lower handicap/adjusted)
-      // Let's integrate standard net handicap points calculation or differential accounting:
-      const hcDiff = homeObj.hc - awayObj.hc;
-      // If home has higher HC, away gets handicap points or vice-versa. Let's add handicap accounting cleanly:
-      let effectiveHPts = hPts;
-      let effectiveAPts = aPts;
-      
-      // We will keep base performance + handicap adjustments tracked per game history entry
+      let rawDiff = homeObj.hc - awayObj.hc;
+      let cappedDiff = Math.max(-3, Math.min(3, rawDiff));
       const existingIdx = gameHistory.findIndex(g => g.round === activeRound && g.game === activeGame);
 
       const gameData = {
         round: activeRound,
         game: activeGame,
         hPts, aPts,
-        hcDiff,
+        hcDiff: cappedDiff,
         h8bb: home8bbActive, hTr: homeTrActive,
         a8bb: away8bbActive, aTr: awayTrActive,
-        homeIdx, awayIdx, homePlayer, awayPlayer,
+        homeIdx, awayIdx, homePlayer: home5Players[homeIdx], awayPlayer: away5Players[awayIdx],
         homeHc: homeObj.hc, awayHc: awayObj.hc
       };
 
@@ -1337,14 +1450,14 @@
 
       gameHistory.forEach(g => {
         const r = g.round;
-        // Account for handicap differential if applicable (e.g., adding hcDiff to respective score)
         let adjHPts = g.hPts;
         let adjAPts = g.aPts;
         
-        if (g.hcDiff > 0) {
-          adjAPts += g.hcDiff;
-        } else if (g.hcDiff < 0) {
-          adjHPts += Math.abs(g.hcDiff);
+        let cappedDiff = Math.max(-3, Math.min(3, g.hcDiff));
+        if (cappedDiff > 0) {
+          adjAPts += cappedDiff;
+        } else if (cappedDiff < 0) {
+          adjHPts += Math.abs(cappedDiff);
         }
 
         roundScores[r].homePts += adjHPts;
@@ -1489,6 +1602,7 @@
 
       renderMatchupProgressTable();
       renderPlayerHeadToHead(activeGame - 1, (activeGame - 1 + (activeRound - 1)) % 5);
+      updateLiveGameBreakdownCard();
       updateRunButtonStates();
       updateScoreButtonStates();
     }
@@ -1498,7 +1612,7 @@
       const aPlayer = away5Players[awayIdx] || `Away P${awayIdx+1}`;
 
       const getHc = (str) => {
-        const m = str.match(/\[HC:(\d+)\]/);
+        const m = str.match(/\[HC:(.*?)\]/);
         return m ? m[1] : '0';
       };
 
@@ -1525,8 +1639,9 @@
         if (matchGame) {
           let adjHPts = matchGame.hPts;
           let adjAPts = matchGame.aPts;
-          if (matchGame.hcDiff > 0) adjAPts += matchGame.hcDiff;
-          else if (matchGame.hcDiff < 0) adjHPts += Math.abs(matchGame.hcDiff);
+          let cappedDiff = Math.max(-3, Math.min(3, matchGame.hcDiff));
+          if (cappedDiff > 0) adjAPts += cappedDiff;
+          else if (cappedDiff < 0) adjHPts += Math.abs(cappedDiff);
 
           totalHPts += adjHPts;
           totalAPts += adjAPts;
@@ -1543,8 +1658,8 @@
 
           tr.innerHTML = `
             <td>R${r} ${rAwayIdx === awayIdx ? '(Current)' : ''}</td>
-            <td>${hBadges} ${matchGame.hPts}${matchGame.hcDiff < 0 ? ` <span style="color:var(--yellow-accent);">(+${Math.abs(matchGame.hcDiff)})</span>` : ''}</td>
-            <td>${matchGame.aPts}${matchGame.hcDiff > 0 ? ` <span style="color:var(--yellow-accent);">(+${matchGame.hcDiff})</span>` : ''} ${aBadges}</td>
+            <td>${hBadges} ${matchGame.hPts}${matchGame.hcDiff < 0 ? ` <span style="color:var(--yellow-accent);">(+${Math.min(3, Math.abs(matchGame.hcDiff))})</span>` : ''}</td>
+            <td>${matchGame.aPts}${matchGame.hcDiff > 0 ? ` <span style="color:var(--yellow-accent);">(+${Math.min(3, matchGame.hcDiff)})</span>` : ''} ${aBadges}</td>
             <td>${winnerStr}</td>
           `;
         } else {
@@ -1596,8 +1711,9 @@
         
         let adjHPts = g.hPts;
         let adjAPts = g.aPts;
-        if (g.hcDiff > 0) adjAPts += g.hcDiff;
-        else if (g.hcDiff < 0) adjHPts += Math.abs(g.hcDiff);
+        let cappedDiff = Math.max(-3, Math.min(3, g.hcDiff));
+        if (cappedDiff > 0) adjAPts += cappedDiff;
+        else if (cappedDiff < 0) adjHPts += Math.abs(cappedDiff);
 
         let hBadges = (g.h8bb ? '<span class="badge">8BB</span>' : '') + (g.hTr ? '<span class="badge">TR</span>' : '');
         let aBadges = (g.a8bb ? '<span class="badge">8BB</span>' : '') + (g.aTr ? '<span class="badge">TR</span>' : '');
@@ -1637,7 +1753,7 @@
       document.getElementById('homeTeamMatchPts').textContent = totals.teamPoints.home;
       document.getElementById('awayTeamMatchPts').textContent = totals.teamPoints.away;
       document.getElementById('homePtsDetail').textContent = `Pts: ${totals.totalPts.home} | Wins: ${totals.totalWins.home}`;
-      document.getElementById('awayPtsDetail').textContent = `Pts: ${totals.totalPts.away} | Wins: ${totals.totalWins.away}`;
+      document.getElementById('awayPtsDetail').textContent = `Pts: ${totals.totalPts.totalPts?.away || totals.totalPts.away} | Wins: ${totals.totalWins.away}`;
     }
   </script>
 </body>
