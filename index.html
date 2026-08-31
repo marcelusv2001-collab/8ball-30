@@ -262,7 +262,7 @@
       padding: 14px;
       width: 100%;
       max-width: 1100px;
-      height: 100%;
+      height: calc(100vh - 24px);
       max-height: calc(100vh - 24px);
       display: flex;
       flex-direction: column;
@@ -317,12 +317,20 @@
       flex-direction: column;
       flex-grow: 1;
       justify-content: space-between;
-      overflow-y: auto;
-      padding-right: 4px;
+      overflow: hidden;
+      height: 100%;
     }
 
     .tab-content.hidden {
       display: none !important;
+    }
+
+    .scoring-main-container {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      height: calc(100% - 45px);
+      gap: 8px;
     }
 
     /* Compact Score Box */
@@ -331,7 +339,6 @@
       border: 1px solid var(--border-color);
       border-radius: 8px;
       padding: 10px;
-      margin-bottom: 8px;
       flex-shrink: 0;
     }
 
@@ -423,8 +430,12 @@
       border: 1px solid var(--border-color);
       border-radius: 8px;
       padding: 10px;
-      margin: 8px 0;
-      flex-shrink: 0;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow-y: auto;
+      min-height: 0;
     }
 
     .pvp-review-card h4 {
@@ -457,7 +468,6 @@
       border: 1px solid var(--yellow-accent);
       border-radius: 8px;
       padding: 8px 10px;
-      margin: 6px 0;
       flex-shrink: 0;
     }
     .live-breakdown-title {
@@ -493,6 +503,7 @@
       flex-direction: column;
       flex-grow: 1;
       gap: 10px;
+      height: calc(100% - 45px);
     }
 
     .summary-table-wrap { width: 100%; overflow-x: auto; flex-shrink: 0; }
@@ -514,7 +525,7 @@
       display: flex;
       flex-direction: column;
       overflow-y: auto;
-      min-height: 220px;
+      min-height: 0;
     }
 
     .matchup-progress-card h4 {
@@ -632,7 +643,7 @@
 
       <!-- Tab 1: Live Scoring -->
       <div id="scoringTab" class="tab-content">
-        <div>
+        <div class="scoring-main-container">
           <div class="compact-game-box">
             <!-- Home Player Row -->
             <div class="player-row">
@@ -674,7 +685,7 @@
             </div>
           </div>
 
-          <button id="saveGameBtn" style="width: 100%; margin-bottom: 6px;" class="enter-btn">Submit Game Result</button>
+          <button id="saveGameBtn" style="width: 100%; flex-shrink: 0;" class="enter-btn">Submit Game Result</button>
 
           <!-- Player vs. Player Live Match Review -->
           <div class="pvp-review-card">
@@ -766,7 +777,7 @@
           </div>
         </div>
 
-        <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 10px; flex-shrink: 0; align-items: center;">
+        <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: auto; flex-shrink: 0; align-items: center; padding-top: 8px;">
           <button id="backToScoringBtn" class="secondary" style="font-size: 11px; padding: 6px 10px;">Back to Scoring</button>
         </div>
       </div>
