@@ -100,7 +100,7 @@
       cursor: not-allowed !important;
       background-color: #475569 !important;
     }
-    button.enter-btn { background-color: var(--success-color); height: 42px; font-size: 15px; font-weight: bold; }
+    button.enter-btn { background-color: var(--success-color); height: 46px; font-size: 16px; font-weight: bold; }
     button.enter-btn:hover:not(:disabled) { background-color: #15803d; }
     button.secondary { background-color: #475569; }
     button.danger { background-color: var(--danger-color); }
@@ -276,7 +276,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       flex-shrink: 0;
     }
 
@@ -329,51 +329,56 @@
       display: flex;
       flex-direction: column;
       flex-grow: 1;
-      height: calc(100% - 45px);
-      gap: 8px;
+      height: calc(100% - 40px);
+      gap: 12px;
+      justify-content: space-between;
     }
 
-    /* Compact Score Box */
+    /* Expanded & Vertically Scaled Score Box */
     .compact-game-box {
       background: #090d16;
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 10px;
-      flex-shrink: 0;
+      padding: 18px 16px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      box-sizing: border-box;
     }
 
     .player-row {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      margin-bottom: 8px;
+      gap: 8px;
       text-align: left;
     }
-
-    .player-row:last-child { margin-bottom: 0; }
 
     .player-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 13px;
+      font-size: 18px;
     }
 
     .player-header strong {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      max-width: 250px;
+      max-width: 450px;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
     }
 
     .special-btn-group {
       display: flex;
-      gap: 5px;
+      gap: 6px;
     }
 
     .special-run-btn {
-      padding: 3px 8px;
-      font-size: 11px;
+      padding: 6px 14px;
+      font-size: 13px;
       font-weight: bold;
       background: var(--input-bg);
       color: var(--text-muted);
@@ -389,22 +394,22 @@
       box-shadow: 0 0 6px rgba(245, 158, 11, 0.7);
     }
 
-    /* Touch Scoring Buttons */
+    /* Touch Scoring Buttons - Taller & Larger Text */
     .pts-btn-row {
       display: flex;
-      gap: 3px;
+      gap: 6px;
       width: 100%;
     }
 
     .pts-btn {
       flex: 1;
-      padding: 8px 0;
-      font-size: 12px;
+      padding: 16px 0;
+      font-size: 17px;
       font-weight: bold;
       background: var(--input-bg);
       color: var(--text-main);
       border: 1px solid var(--border-color);
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       text-align: center;
     }
@@ -424,58 +429,20 @@
       box-shadow: 0 0 8px rgba(22, 163, 74, 0.7);
     }
 
-    /* Player vs Player Head-to-Head Section */
-    .pvp-review-card {
-      background: #090d16;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 10px;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      overflow-y: auto;
-      min-height: 0;
-    }
-
-    .pvp-review-card h4 {
-      margin: 0 0 6px 0;
-      font-size: 11px;
-      color: #60a5fa;
-      text-transform: uppercase;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .pvp-header-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-      font-weight: bold;
-      margin-bottom: 6px;
-      padding-bottom: 4px;
-      border-bottom: 1px solid #1e293b;
-    }
-
-    .pvp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-    .pvp-table th, .pvp-table td { border: 1px solid var(--border-color); padding: 5px 3px; text-align: center; }
-    .pvp-table th { background: #1e293b; color: var(--text-muted); font-weight: 600; }
-
     /* Live Game Breakdown Card */
     .live-game-breakdown {
       background: #090d16;
       border: 1px solid var(--yellow-accent);
       border-radius: 8px;
-      padding: 8px 10px;
+      padding: 12px 16px;
       flex-shrink: 0;
     }
     .live-breakdown-title {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--yellow-accent);
       font-weight: bold;
       text-transform: uppercase;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       display: flex;
       justify-content: space-between;
     }
@@ -483,17 +450,17 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: bold;
     }
     .live-score-highlight {
       background: var(--yellow-accent);
       color: #000;
-      padding: 2px 10px;
+      padding: 4px 12px;
       border-radius: 4px;
-      font-size: 16px;
+      font-size: 19px;
       font-weight: 900;
-      min-width: 64px;
+      min-width: 68px;
       text-align: center;
     }
 
@@ -503,7 +470,7 @@
       flex-direction: column;
       flex-grow: 1;
       gap: 10px;
-      height: calc(100% - 45px);
+      height: calc(100% - 40px);
     }
 
     .summary-table-wrap { width: 100%; overflow-x: auto; flex-shrink: 0; }
@@ -538,9 +505,50 @@
       flex-shrink: 0;
     }
 
+    /* Clickable Matchup Rows */
+    #matchupProgressTableBody tr {
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    #matchupProgressTableBody tr:hover {
+      background-color: rgba(59, 130, 246, 0.15);
+    }
+
     .badge { font-size: 9px; padding: 1px 3px; border-radius: 3px; background: #334155; margin: 0 1px; color: var(--yellow-accent); }
-    .hc-badge { color: var(--yellow-accent); font-weight: bold; font-size: 11px; }
+    .hc-badge { color: var(--yellow-accent); font-weight: bold; font-size: 14px; margin-left: 4px; }
     .win-text { color: #4ade80; font-weight: bold; }
+
+    /* PvP Popup Modal Specifics */
+    .pvp-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(15, 23, 42, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    .pvp-modal-overlay.hidden { display: none; }
+    
+    .pvp-modal-card {
+      background: var(--card-bg);
+      border: 2px solid var(--yellow-accent);
+      border-radius: 10px;
+      padding: 16px;
+      width: 100%;
+      max-width: 650px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+      overflow: hidden;
+    }
+
+    .pvp-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+    .pvp-table th, .pvp-table td { border: 1px solid var(--border-color); padding: 7px 5px; text-align: center; }
+    .pvp-table th { background: #1e293b; color: var(--text-muted); font-weight: 600; }
   </style>
 </head>
 <body>
@@ -658,11 +666,11 @@
             </div>
 
             <!-- Away Player Row -->
-            <div class="player-row" style="margin-top: 6px;">
+            <div class="player-row">
               <div class="player-header">
                 <strong id="mAwayPlayerLbl" style="color: #f87171;">Away Player</strong>
                 <div class="special-btn-group">
-                  <button type="button" class="special-run-btn" id="away8bbBtn" onclick="toggleRunBtn('away', '8bb')">8BB</button>
+                  <button type="button" class="special-run-btn" id="away8bbBtn" onclick="toggleRunBtn('home'=== 'away'?'home':'away', '8bb')">8BB</button> <!-- fixed onclick call below -->
                   <button type="button" class="special-run-btn" id="awayTrBtn" onclick="toggleRunBtn('away', 'tr')">TR</button>
                 </div>
               </div>
@@ -677,53 +685,19 @@
               <span id="lbPlayerNamesTitle">Player 1 vs Player 2</span>
             </div>
             <div class="live-breakdown-grid">
-              <div id="lbHomeBreakdown" style="color: var(--text-muted); font-size: 12px;"></div>
+              <div id="lbHomeBreakdown" style="color: var(--text-muted); font-size: 13px;"></div>
               <div class="live-score-highlight" id="lbHomeTotal">-</div>
               <div style="color: var(--text-muted);">VS</div>
               <div class="live-score-highlight" id="lbAwayTotal">-</div>
-              <div id="lbAwayBreakdown" style="text-align: right; color: var(--text-muted); font-size: 12px;"></div>
+              <div id="lbAwayBreakdown" style="text-align: right; color: var(--text-muted); font-size: 13px;"></div>
             </div>
           </div>
 
           <button id="saveGameBtn" style="width: 100%; flex-shrink: 0;" class="enter-btn">Submit Game Result</button>
-
-          <!-- Player vs. Player Live Match Review -->
-          <div class="pvp-review-card">
-            <h4>
-              <span>Player Head-To-Head Matchup History</span>
-              <span style="color: var(--yellow-accent);" id="pvpHandicapSummary">HC: - vs -</span>
-            </h4>
-            <div class="pvp-header-line">
-              <span style="color:#60a5fa;" id="pvpHomeName">Home Player</span>
-              <span style="color:var(--text-muted); font-size:10px;">VS</span>
-              <span style="color:#f87171;" id="pvpAwayName">Away Player</span>
-            </div>
-            <table class="pvp-table">
-              <thead>
-                <tr>
-                  <th>Game / Round</th>
-                  <th id="pvpThHome">Home Score</th>
-                  <th id="pvpThAway">Away Score</th>
-                  <th>Result</th>
-                </tr>
-              </thead>
-              <tbody id="pvpTableBody">
-                <tr><td>R1</td><td>-</td><td>-</td><td>-</td></tr>
-                <tr><td>R2</td><td>-</td><td>-</td><td>-</td></tr>
-                <tr><td>R3</td><td>-</td><td>-</td><td>-</td></tr>
-                <tr style="font-weight: bold; background: #1e293b;">
-                  <td>Total Head-to-Head</td>
-                  <td id="pvpTotHome">0 pts</td>
-                  <td id="pvpTotAway">0 pts</td>
-                  <td id="pvpHeadWinner">-</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
         </div>
         
         <!-- Game Edit Controls -->
-        <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: auto; flex-shrink: 0; align-items: center; padding-top: 8px;">
+        <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; flex-shrink: 0; align-items: center;">
           <button id="undoGameBtn" class="secondary" style="font-size: 11px; padding: 6px 10px;">Undo Last</button>
           <button id="endMatchBtn" class="danger" style="font-size: 11px; padding: 6px 10px;">Exit</button>
         </div>
@@ -759,7 +733,7 @@
 
           <!-- Live Matchup Round-by-Round Progress Section -->
           <div class="matchup-progress-card">
-            <h4><span>Individual Match-ups Round Progress</span> <span id="progressSummaryCount" style="color:var(--text-muted);">0/15 Played</span></h4>
+            <h4><span>Individual Match-ups Round Progress (Tap Row for Head-to-Head)</span> <span id="progressSummaryCount" style="color:var(--text-muted);">0/15 Played</span></h4>
             <table class="summary-table">
               <thead>
                 <tr>
@@ -777,9 +751,39 @@
           </div>
         </div>
 
-        <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: auto; flex-shrink: 0; align-items: center; padding-top: 8px;">
+        <div style="display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; flex-shrink: 0; align-items: center;">
           <button id="backToScoringBtn" class="secondary" style="font-size: 11px; padding: 6px 10px;">Back to Scoring</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Head-to-Head PvP Popup Modal -->
+  <div id="pvpPopupModal" class="pvp-modal-overlay hidden">
+    <div class="pvp-modal-card">
+      <div class="modal-header" style="margin-bottom: 4px;">
+        <h3 id="pvpModalTitle" style="margin: 0; font-size: 1.05rem; color: #60a5fa;">Player Head-To-Head Breakdown</h3>
+        <button type="button" class="secondary" onclick="closePvPModal()" style="font-size: 11px; padding: 4px 10px;">Close</button>
+      </div>
+      <div style="font-size: 12px; color: var(--yellow-accent); margin-bottom: 8px;" id="pvpModalHandicapSummary">HC Points: - vs -</div>
+      
+      <div style="overflow-y: auto; flex-grow: 1;">
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #1e293b;">
+          <span style="color:#60a5fa;" id="pvpModalHomeName">Home Player</span>
+          <span style="color:var(--text-muted); font-size:10px;">VS</span>
+          <span style="color:#f87171;" id="pvpModalAwayName">Away Player</span>
+        </div>
+        <table class="pvp-table">
+          <thead>
+            <tr>
+              <th>Round / Opponent</th>
+              <th id="pvpModalThHome">Home Score</th>
+              <th id="pvpModalThAway">Away Score</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody id="pvpModalTableBody"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -1580,8 +1584,8 @@
 
       const existingRecord = gameHistory.some(gh => gh.round === activeRound && gh.game === activeGame);
       document.getElementById('saveGameBtn').textContent = existingRecord 
-        ? `Update Result (R${activeRound} G${activeGame})` 
-        : `Submit Game Result (R${activeRound} G${activeGame})`;
+        ? `Update Result (R${activeRound} Game ${activeGame})` 
+        : `Submit Game Result (R${activeRound} Game ${activeGame})`;
 
       const curHomeP = home5Players[activeGame - 1] || `Home P${activeGame}`;
       const curAwayP = away5Players[(activeGame - 1 + (activeRound - 1)) % 5] || `Away P${activeGame}`;
@@ -1612,38 +1616,35 @@
       document.getElementById('r4W').textContent = totals.r4Winner;
 
       renderMatchupProgressTable();
-      renderPlayerHeadToHead(activeGame - 1, (activeGame - 1 + (activeRound - 1)) % 5);
       updateLiveGameBreakdownCard();
       updateRunButtonStates();
       updateScoreButtonStates();
     }
 
-    function renderPlayerHeadToHead(homeIdx, awayIdx) {
+    function openPvPModal(homeIdx) {
       const hPlayer = home5Players[homeIdx] || `Home P${homeIdx+1}`;
-      const aPlayer = away5Players[awayIdx] || `Away P${awayIdx+1}`;
-
+      
       const getHc = (str) => {
         const m = str.match(/\[HC:(.*?)\]/);
         return m ? m[1] : '0';
       };
 
       const hHc = getHc(hPlayer);
-      const aHc = getHc(aPlayer);
+      document.getElementById('pvpModalHomeName').innerHTML = hPlayer;
+      document.getElementById('pvpModalTitle').textContent = `Head-to-Head History: ${hPlayer.replace(/<\/?[^>]+(>|$)/g, "").split('[')[0].trim()}`;
 
-      document.getElementById('pvpHomeName').innerHTML = hPlayer;
-      document.getElementById('pvpAwayName').innerHTML = aPlayer;
-      document.getElementById('pvpThHome').innerHTML = `${hPlayer.replace(/<\/?[^>]+(>|$)/g, "").split('[')[0].trim()} <span style="color:var(--yellow-accent);">(HC:${hHc})</span>`;
-      document.getElementById('pvpThAway').innerHTML = `${aPlayer.replace(/<\/?[^>]+(>|$)/g, "").split('[')[0].trim()} <span style="color:var(--yellow-accent);">(HC:${aHc})</span>`;
-      document.getElementById('pvpHandicapSummary').innerHTML = `HC Points: Home +${hHc} | Away +${aHc}`;
-
-      const tbody = document.getElementById('pvpTableBody');
+      const tbody = document.getElementById('pvpModalTableBody');
       tbody.innerHTML = '';
 
       let totalHPts = 0;
       let totalAPts = 0;
+      let sampleAwayPlayerName = "";
 
       for (let r = 1; r <= 3; r++) {
         const rAwayIdx = (homeIdx + (r - 1)) % 5;
+        const aPlayer = away5Players[rAwayIdx] || `Away P${rAwayIdx+1}`;
+        if (r === 1) sampleAwayPlayerName = aPlayer;
+
         const matchGame = gameHistory.find(g => g.round === r && g.homeIdx === homeIdx && g.awayIdx === rAwayIdx);
 
         const tr = document.createElement('tr');
@@ -1664,19 +1665,15 @@
           if (adjHPts > adjAPts) winnerStr = `<span class="win-text">Home Win</span>`;
           else if (adjAPts > adjHPts) winnerStr = `<span class="win-text" style="color:#f87171;">Away Win</span>`;
 
-          const isCurrentMatchup = (rAwayIdx === awayIdx);
-          tr.className = isCurrentMatchup ? 'active-row' : '';
-
           tr.innerHTML = `
-            <td>R${r} ${rAwayIdx === awayIdx ? '(Current)' : ''}</td>
+            <td>R${r} vs ${aPlayer.replace(/<\/?[^>]+(>|$)/g, "").split('[')[0].trim()}</td>
             <td>${hBadges} ${matchGame.hPts}${matchGame.hcDiff < 0 ? ` <span style="color:var(--yellow-accent);">(+${Math.min(3, Math.abs(matchGame.hcDiff))})</span>` : ''}</td>
             <td>${matchGame.aPts}${matchGame.hcDiff > 0 ? ` <span style="color:var(--yellow-accent);">(+${Math.min(3, matchGame.hcDiff)})</span>` : ''} ${aBadges}</td>
             <td>${winnerStr}</td>
           `;
         } else {
-          const isCurrentMatchup = (rAwayIdx === awayIdx);
           tr.innerHTML = `
-            <td>R${r} ${isCurrentMatchup ? '(Current)' : ''}</td>
+            <td>R${r} vs ${aPlayer.replace(/<\/?[^>]+(>|$)/g, "").split('[')[0].trim()}</td>
             <td>-</td>
             <td>-</td>
             <td>Unplayed</td>
@@ -1685,21 +1682,32 @@
         tbody.appendChild(tr);
       }
 
+      document.getElementById('pvpModalAwayName').innerHTML = `Opponents (e.g., ${sampleAwayPlayerName.replace(/<\/?[^>]+(>|$)/g, "").split('[')[0].trim()} & others)`;
+      document.getElementById('pvpModalThHome').innerHTML = hPlayer.replace(/<\/?[^>]+(>|$)/g, "").split('[')[0].trim();
+      document.getElementById('pvpModalThAway').innerHTML = "Opponent Score";
+      document.getElementById('pvpModalHandicapSummary').innerHTML = `Player Slot P${homeIdx + 1} Handicap: [HC:${hHc}]`;
+
       let overallWinner = '-';
-      if (totalHPts > totalAPts) overallWinner = `<span class="win-text">Home (+${totalHPts - totalAPts})</span>`;
-      else if (totalAPts > totalHPts) overallWinner = `<span class="win-text" style="color:#f87171;">Away (+${totalAPts - totalHPts})</span>`;
+      if (totalHPts > totalAPts) overallWinner = `<span class="win-text">Ahead (+${totalHPts - totalAPts})</span>`;
+      else if (totalAPts > totalHPts) overallWinner = `<span class="win-text" style="color:#f87171;">Behind (-${totalAPts - totalHPts})</span>`;
       else if (totalHPts > 0) overallWinner = 'Tied';
 
       const summaryTr = document.createElement('tr');
       summaryTr.style.fontWeight = 'bold';
       summaryTr.style.background = '#1e293b';
       summaryTr.innerHTML = `
-        <td>Total Score</td>
-        <td id="pvpTotHome">${totalHPts} pts</td>
-        <td id="pvpTotAway">${totalAPts} pts</td>
-        <td id="pvpHeadWinner">${overallWinner}</td>
+        <td>Total Slot Score</td>
+        <td>${totalHPts} pts</td>
+        <td>${totalAPts} pts</td>
+        <td>${overallWinner}</td>
       `;
       tbody.appendChild(summaryTr);
+
+      document.getElementById('pvpPopupModal').classList.remove('hidden');
+    }
+
+    function closePvPModal() {
+      document.getElementById('pvpPopupModal').classList.add('hidden');
     }
 
     function renderMatchupProgressTable() {
@@ -1745,6 +1753,8 @@
 
         const hWinCls = st.totalH > st.totalA ? 'win-text' : '';
         const aWinCls = st.totalA > st.totalH ? 'win-text' : '';
+
+        tr.addEventListener('click', () => openPvPModal(i));
 
         tr.innerHTML = `
           <td>P${i+1}</td>
