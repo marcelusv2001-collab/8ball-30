@@ -148,11 +148,11 @@
     }
     .np-btn.active { background: var(--yellow-accent); color: #000; font-weight: bold; }
 
-    .np-input-wrap {
+    .manual-input-wrap, .np-input-wrap {
       flex: 1;
       display: none;
     }
-    .np-input-wrap.active {
+    .manual-input-wrap.active, .np-input-wrap.active {
       display: block;
     }
 
@@ -670,7 +670,7 @@
               <div class="player-header">
                 <strong id="mAwayPlayerLbl" style="color: #f87171;">Away Player</strong>
                 <div class="special-btn-group">
-                  <button type="button" class="special-run-btn" id="away8bbBtn" onclick="toggleRunBtn('home'=== 'away'?'home':'away', '8bb')">8BB</button> <!-- fixed onclick call below -->
+                  <button type="button" class="special-run-btn" id="away8bbBtn" onclick="toggleRunBtn('away', '8bb')">8BB</button>
                   <button type="button" class="special-run-btn" id="awayTrBtn" onclick="toggleRunBtn('away', 'tr')">TR</button>
                 </div>
               </div>
@@ -897,9 +897,11 @@
     function setTeamInputDisabled(prefix, disabled) {
       for (let i = 1; i <= 5; i++) {
         document.getElementById(`${prefix}P${i}`).disabled = disabled;
-        document.getElementById(`${prefix}NpName${i}`).disabled = disabled;
+        const manualInput = document.getElementById(`${prefix}Manual${i}`);
+        if (manualInput) manualInput.disabled = disabled;
         document.getElementById(`${prefix}Hc${i}`).disabled = disabled;
-        document.getElementById(`${prefix}NpBtn${i}`).disabled = disabled;
+        const npBtn = document.getElementById(`${prefix}NpBtn${i}`);
+        if (npBtn) npBtn.disabled = disabled;
       }
     }
 
@@ -1059,7 +1061,10 @@
         div.className = 'roster-slot';
         div.innerHTML = `
           <span>P${i}:</span>
-          <select id="${prefix}P${i}"><option value="">-- Player ${i} --</option></select>
+          <select id="${prefix}P${i}" onchange="handlePlayerSelectChange('${prefix}', ${i})"><option value="">-- Player ${i} --</option></select>
+          <div class="manual-input-wrap" id="${prefix}ManualWrap${i}">
+            <input type="text" id="${prefix}Manual${i}" placeholder="Enter name manually..." />
+          </div>
           <div class="np-input-wrap" id="${prefix}NpWrap${i}">
             <input type="text" id="${prefix}NpName${i}" placeholder="Enter New Player..." />
           </div>
@@ -1069,8 +1074,24 @@
           <button type="button" class="np-btn" id="${prefix}NpBtn${i}" onclick="toggleNpTag('${prefix}', ${i})">+NP</button>
         `;
         container.appendChild(div);
-        
-        document.getElementById(`${prefix}P${i}`).addEventListener('change', () => autoSetHandicapFromSelection(prefix, i));
+      }
+    }
+
+    function handlePlayerSelectChange(prefix, slot) {
+      const select = document.getElementById(`${prefix}P${slot}`);
+      const manualWrap = document.getElementById(`${prefix}ManualWrap${slot}`);
+      const npBtn = document.getElementById(`${prefix}NpBtn${slot}`);
+      
+      if (select.value === '__ADD_MANUAL__') {
+        if (npBtn.classList.contains('active')) {
+          toggleNpTag(prefix, slot);
+        }
+        select.style.display = 'none';
+        manualWrap.classList.add('active');
+        document.getElementById(`${prefix}Manual${slot}`).focus();
+        npBtn.style.display = 'none';
+      } else {
+        autoSetHandicapFromSelection(prefix, slot);
       }
     }
 
@@ -1106,6 +1127,13 @@
       const btn = document.getElementById(`${prefix}NpBtn${slot}`);
       const select = document.getElementById(`${prefix}P${slot}`);
       const npWrap = document.getElementById(`${prefix}NpWrap${slot}`);
+      const manualWrap = document.getElementById(`${prefix}ManualWrap${slot}`);
+
+      if (manualWrap.classList.contains('active')) {
+        manualWrap.classList.remove('active');
+        select.style.display = 'block';
+        select.value = '';
+      }
 
       btn.classList.toggle('active');
       if (btn.classList.contains('active')) {
@@ -1273,7 +1301,22 @@
 
       for (let i = 1; i <= 5; i++) {
         const select = document.getElementById(`${prefix}P${i}`);
-        select.innerHTML = `<option value="">-- Player ${i} --</option>`;
+        const manualWrap = document.getElementById(`${prefix}ManualWrap${i}`);
+        const npWrap = document.getElementById(`${prefix}NpWrap${i}`);
+        const npBtn = document.getElementById(`${prefix}NpBtn${i}`);
+
+        select.style.display = 'block';
+        manualWrap.classList.remove('active');
+        npWrap.classList.remove('active');
+        npBtn.style.display = 'inline-block';
+        npBtn.classList.remove('active');
+        document.getElementById(`${prefix}Manual${i}`).value = '';
+        document.getElementById(`${prefix}NpName${i}`).value = '';
+
+        select.innerHTML = `
+          <option value="">-- Player ${i} --</option>
+          <option value="__ADD_MANUAL__" style="color: var(--yellow-accent); font-weight: bold;">+ Add Player Manually...</option>
+        `;
         
         teamRoster.forEach((r, idx) => {
           const playerName = r[COL.ROST_PLAYER] ? r[COL.ROST_PLAYER].trim() : `Player ${idx + 1}`;
@@ -1289,7 +1332,7 @@
         });
 
         if (teamRoster[i - 1]) {
-          select.selectedIndex = i;
+          select.selectedIndex = i + 1;
           autoSetHandicapFromSelection(prefix, i);
         }
       }
@@ -1298,15 +1341,21 @@
     function getFormattedPlayerName(prefix, slot) {
       const hcVal = document.getElementById(`${prefix}Hc${slot}`).value;
       const hcDisplay = hcVal === "" ? "0" : hcVal;
+      const select = document.getElementById(`${prefix}P${slot}`);
+      const isManual = select.value === '__ADD_MANUAL__';
       const isNp = document.getElementById(`${prefix}NpBtn${slot}`).classList.contains('active');
       let name = '';
 
-      if (isNp) {
+      if (isManual) {
+        const manualInput = document.getElementById(`${prefix}Manual${slot}`).value.trim();
+        name = manualInput || `Player ${slot}`;
+        return `${name} <span class="hc-badge">[HC:${hcDisplay}]</span>`;
+      } else if (isNp) {
         const npNameInput = document.getElementById(`${prefix}NpName${slot}`).value.trim();
         name = npNameInput || `New Player ${slot}`;
         return `${name} (Np) <span class="hc-badge">[HC:${hcDisplay}]</span>`;
       } else {
-        name = document.getElementById(`${prefix}P${slot}`).value || `${prefix.toUpperCase()} P${slot}`;
+        name = select.value || `${prefix.toUpperCase()} P${slot}`;
         return `${name} <span class="hc-badge">[HC:${hcDisplay}]</span>`;
       }
     }
@@ -1314,8 +1363,19 @@
     function getPlainPlayerName(prefix, slot) {
       const hcVal = document.getElementById(`${prefix}Hc${slot}`).value;
       const hcNum = hcVal === "" ? 0 : parseInt(hcVal, 10);
+      const select = document.getElementById(`${prefix}P${slot}`);
+      const isManual = select.value === '__ADD_MANUAL__';
       const isNp = document.getElementById(`${prefix}NpBtn${slot}`).classList.contains('active');
-      let name = isNp ? (document.getElementById(`${prefix}NpName${slot}`).value.trim() || `New Player ${slot}`) : (document.getElementById(`${prefix}P${slot}`).value || `${prefix.toUpperCase()} P${slot}`);
+      
+      let name = '';
+      if (isManual) {
+        name = document.getElementById(`${prefix}Manual${slot}`).value.trim() || `Player ${slot}`;
+      } else if (isNp) {
+        name = document.getElementById(`${prefix}NpName${slot}`).value.trim() || `New Player ${slot}`;
+      } else {
+        name = select.value || `${prefix.toUpperCase()} P${slot}`;
+      }
+
       return { name, hc: isNaN(hcNum) ? 0 : hcNum };
     }
 
